@@ -16,3 +16,6 @@ include 'services:webservice'
 */
 
 rootProject.name = 'haipiao'
+
+include 'haipiao-demo'
+include 'haipiao-entities'

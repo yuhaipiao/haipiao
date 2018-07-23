@@ -1,29 +1,25 @@
-apply plugin: 'application'
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+}
 
-sourceSets {
+subprojects {
+    
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    } 
+
     test {
-        java.srcDirs = ['src/test/java/unit']
+        testLogging.events "PASSED", "FAILED", "SKIPPED"
+        testLogging.showStandardStreams = true
     }
+
+    dependencies {
+        compile 'com.google.guava:guava:22.0'
+        compile 'org.projectlombok:lombok:1.18.0'
+        testCompile 'junit:junit:4.12'
+    }
+
 }
-
-test {
-    testLogging.events "PASSED", "FAILED", "SKIPPED"
-    testLogging.showStandardStreams = true
-}
-
-repositories {
-    jcenter()
-}
-
-dependencies {
-    compile 'com.google.guava:guava:22.0'
-
-    testCompile 'junit:junit:4.12'
-}
-
-// Define the main class for the application
-mainClassName = 'com.haipiao.application.App'
-
