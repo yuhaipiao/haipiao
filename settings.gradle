@@ -18,3 +18,4 @@ include 'services:webservice'
 rootProject.name = 'haipiao'
 
 include 'persist'
+include 'user-service'
