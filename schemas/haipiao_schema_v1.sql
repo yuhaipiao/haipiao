@@ -25,6 +25,7 @@ create table hp_user
     country         varchar(32),
     zip_code        varchar(16),
     profile_img_url varchar(256),
+    profile_img_url_small varchar(256),
     organization    varchar(128),
     signature       varchar(256),  -- 个性签名
     create_ts       timestamp,
