@@ -1,4 +1,4 @@
-package com.haipiao.userservice.dto;
+package com.haipiao.userservice.resp;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -47,5 +47,3 @@ public class CreateUserResponse {
         }
     }
 }
-
-
