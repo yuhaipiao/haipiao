@@ -3,6 +3,7 @@ package com.haipiao.userservice.application;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -39,5 +40,19 @@ public class UserController {
     @ResponseBody
     public CreateUserResponse createUser(@RequestBody CreateUserRequest req) {
         return createUserHandler.handle(req);
+    }
+
+    @GetMapping("/healthz")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String getHealthz() {
+        return "ok";
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String getRoot() {
+        return "ok";
     }
 }
