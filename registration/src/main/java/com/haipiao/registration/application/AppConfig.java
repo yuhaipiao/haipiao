@@ -19,13 +19,11 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackages = {"com.haipiao.registration.handler"})
 public class AppConfig {
 
-    @Value("${redis.host:localhost}")
-    private String host;
-    @Value("${redis.port:16379}")
-    private int port;
-    @Value("${redis.dbIndex:0}")
+    @Value("${redis.service}")
+    private String service;
+    @Value("${redis.dbIndex}")
     private int dbIndex;
-    @Value("${redis.defaultTTL:600}")
+    @Value("${redis.defaultTTL}")
     private long defaultTTL;
 
     @Bean
@@ -35,9 +33,10 @@ public class AppConfig {
 
     @Bean
     public RedisClientWrapper redisClient() {
+        String[] parts = service.split(":");
         return new RedisClientWrapper(new RedisConfig()
-            .setHostname(host)
-            .setPort(port)
+            .setHostname(parts[0])
+            .setPort(Integer.parseInt(parts[1]))
             .setDbIndex(dbIndex)
             .setDefaultTTL(defaultTTL));
     }

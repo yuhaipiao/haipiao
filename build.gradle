@@ -40,6 +40,7 @@ subprojects {
             java.srcDirs = ['src/test/java/unit']
             resources.srcDirs = ['src/test/java/unit/resources']
             output.resourcesDir = 'build/classes/java/test/resources'
+            runtimeClasspath += test.output
         }
     }
 
