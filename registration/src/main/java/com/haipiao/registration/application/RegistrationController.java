@@ -12,7 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RegistrationController {
@@ -25,9 +33,9 @@ public class RegistrationController {
     private VerifySCHandler verifySCHandler;
 
     @RequestMapping(value = "/security_code", method = RequestMethod.POST)
-    public VendSCResponse vendSecurityCode(@RequestParam("cell") String cell,
-                                           @RequestParam("country_code") String countryCode,
-                                           @RequestParam("type") String type) {
+    public ResponseEntity<VendSCResponse> vendSecurityCode(@RequestParam("cell") String cell,
+                                                           @RequestParam("country_code") String countryCode,
+                                                           @RequestParam("type") String type) {
         logger.info("cell={}, country_code={}, type={}", cell, countryCode, type);
         Preconditions.checkArgument(StringUtils.isNotEmpty(cell));
         Preconditions.checkArgument(StringUtils.isNotEmpty(countryCode));
@@ -40,7 +48,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/verification", method = RequestMethod.POST, consumes ="application/json", produces = "application/json")
-    public VerifySCResponse verifySecurityCode(@RequestBody VerifySCRequest request) {
+    public ResponseEntity<VerifySCResponse> verifySecurityCode(@RequestBody VerifySCRequest request) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(request.getCell()));
         Preconditions.checkArgument(StringUtils.isNotEmpty(request.getSecurityCode()));
         Preconditions.checkArgument(StringUtils.isNotEmpty(request.getType()));

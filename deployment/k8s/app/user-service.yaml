@@ -31,6 +31,7 @@ spec:
       containers:
         - name: usersvc
           image: haipiaodev/user-service:0.0.5
+          imagePullPolicy: Always
           ports:
             - name: usersvc
               containerPort: 8080

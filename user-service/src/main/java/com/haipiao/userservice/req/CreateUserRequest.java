@@ -1,14 +1,18 @@
 package com.haipiao.userservice.req;
 
 import com.google.gson.annotations.SerializedName;
+import com.haipiao.common.req.AbstractRequest;
 
-public class CreateUserRequest {
+public class CreateUserRequest extends AbstractRequest {
+
     @SerializedName("name")
     private String name;
     @SerializedName("gender")
     private String gender;
     @SerializedName("birthday")
     private String birthday;
+
+    private transient String oldSessionToken;
 
     public String getName() {
         return name;
@@ -32,5 +36,13 @@ public class CreateUserRequest {
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+    public String getOldSessionToken() {
+        return oldSessionToken;
+    }
+
+    public void setOldSessionToken(String oldSessionToken) {
+        this.oldSessionToken = oldSessionToken;
     }
 }

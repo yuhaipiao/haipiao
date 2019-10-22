@@ -31,6 +31,7 @@ spec:
       containers:
         - name: registrationsvc
           image: haipiaodev/registration:0.0.2
+          imagePullPolicy: Always
           ports:
             - name: registrationsvc
               containerPort: 8080

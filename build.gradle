@@ -17,7 +17,7 @@ allprojects {
     apply plugin: 'eclipse'
 
     docker {
-        name 'haipiaodev/hp-postgres:0.0.1'
+        name 'haipiaodev/hp-postgres:0.0.4'
         dockerfile project.file('./schemas/Dockerfile')
         files './schemas/haipiao_schema_v1.sql'
     }

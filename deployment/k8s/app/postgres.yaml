@@ -29,7 +29,8 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: haipiaodev/hp-postgres:0.0.3
+          image: haipiaodev/hp-postgres:0.0.4
+          imagePullPolicy: Always
           env:
             - name: POSTGRES_PASSWORD
               value: example

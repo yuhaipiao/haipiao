@@ -6,9 +6,15 @@ import com.haipiao.articleservice.dto.req.CreateArticleRequest;
 import com.haipiao.articleservice.dto.req.GetArticleRequest;
 import com.haipiao.articleservice.dto.resp.CreateArticleResponse;
 import com.haipiao.articleservice.dto.resp.GetArticleResponse;
-import com.haipiao.persist.config.PersistConfig;
+import com.haipiao.common.config.CommonConfig;
+import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
-import com.haipiao.persist.repository.*;
+import com.haipiao.persist.repository.ArticleRepository;
+import com.haipiao.persist.repository.ArticleTopicRepository;
+import com.haipiao.persist.repository.ImageRepository;
+import com.haipiao.persist.repository.TagRepository;
+import com.haipiao.persist.repository.TopicRepository;
+import com.haipiao.persist.repository.UserRepository;
 import org.assertj.core.util.Preconditions;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,29 +23,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+
+import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @EnableConfigurationProperties
-@ContextConfiguration(classes = {ArticleHandlerTest.Config.class, PersistConfig.class})
+@ContextConfiguration(classes = {ArticleHandlerTest.Config.class, CommonConfig.class})
 public class ArticleHandlerTest {
 
     @Configuration
     static class Config {
-        @Autowired
-        private UserRepository userRepository;
 
         @Bean
         public CreateArticleHandler createArticleHandler(
+                @Autowired SessionService sessionService,
                 @Autowired ArticleRepository articleRepository,
                 @Autowired ImageRepository imageRepository,
                 @Autowired TopicRepository topicRepository,
                 @Autowired ArticleTopicRepository articleTopicRepository,
                 @Autowired TagRepository tagRepository) {
             return new CreateArticleHandler(
+                    sessionService,
                     articleRepository,
                     topicRepository,
                     articleTopicRepository,
@@ -49,6 +59,7 @@ public class ArticleHandlerTest {
 
         @Bean
         public GetArticleHandler getArticleHandler(
+                @Autowired SessionService sessionService,
                 @Autowired ArticleRepository articleRepository,
                 @Autowired UserRepository userRepository,
                 @Autowired ImageRepository imageRepository,
@@ -56,6 +67,7 @@ public class ArticleHandlerTest {
                 @Autowired ArticleTopicRepository articleTopicRepository,
                 @Autowired TagRepository tagRepository) {
             return new GetArticleHandler(
+                    sessionService,
                     articleRepository,
                     userRepository,
                     topicRepository,
@@ -117,17 +129,17 @@ public class ArticleHandlerTest {
         }
         createReq.setImages(images);
 
-        CreateArticleResponse createResp = createArticleHandler.handle(createReq);
-        assertTrue(createResp.getSuccess());
-        assertNotNull(createResp.getData().getId());
+        ResponseEntity<CreateArticleResponse> createResp = createArticleHandler.handle(createReq);
+        assertTrue(createResp.getBody().isSuccess());
+        assertNotNull(createResp.getBody().getData().getId());
 
-        int id = createResp.getData().getId();
+        int id = createResp.getBody().getData().getId();
         GetArticleRequest getReq = new GetArticleRequest();
         getReq.setId(id);
-        GetArticleResponse getResp = getArticleHandler.handle(getReq);
-        assertTrue(getResp.getSuccess());
-        assertNotNull(getResp.getData().getAuthor());
-        GetArticleResponse.Data.Image[] actualImages = getResp.getData().getImages();
+        ResponseEntity<GetArticleResponse> getResp = getArticleHandler.handle(getReq);
+        assertTrue(getResp.getBody().isSuccess());
+        assertNotNull(getResp.getBody().getData().getAuthor());
+        GetArticleResponse.ArticleData.Image[] actualImages = getResp.getBody().getData().getImages();
         assertEquals(images.length, actualImages.length);
         for (int i = 0; i < images.length; i++) {
             assertTrue(actualImages[i].getUrl().startsWith(images[i].getExternalUrl()));
@@ -138,15 +150,13 @@ public class ArticleHandlerTest {
                 assertEquals(actualTags[j].getY(), 50+j);
             }
         }
-        Topic[] actualTopics = getResp.getData().getTopics();
+        Topic[] actualTopics = getResp.getBody().getData().getTopics();
         assertEquals(topics.length, actualTopics.length);
-        for (int i = 0; i < topics.length; i++) {
-            assertEquals(actualTopics[i].getName(), topics[i].getName());
-        }
-        assertEquals(title, getResp.getData().getTitle());
-        assertEquals(textBody, getResp.getData().getText());
-        assertEquals(0, getResp.getData().getShares());
-        assertEquals(0, getResp.getData().getLikes());
-        assertEquals(0, getResp.getData().getCollects());
+        assertEquals(Arrays.stream(actualTopics).map(Topic::getName).collect(toSet()), Arrays.stream(topics).map(Topic::getName).collect(toSet()));
+        assertEquals(title, getResp.getBody().getData().getTitle());
+        assertEquals(textBody, getResp.getBody().getData().getText());
+        assertEquals(0, getResp.getBody().getData().getShares());
+        assertEquals(0, getResp.getBody().getData().getLikes());
+        assertEquals(0, getResp.getBody().getData().getCollects());
     }
 }
