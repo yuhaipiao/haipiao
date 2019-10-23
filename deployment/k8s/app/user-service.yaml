@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: usersvc
-          image: haipiaodev/user-service:0.0.5
+          image: haipiaodev/user-service:0.0.6
           imagePullPolicy: Always
           ports:
             - name: usersvc
@@ -48,4 +48,4 @@ spec:
       volumes:
         - name: properties-volume
           configMap:
-            name: application-properties
+            name: app-configmap

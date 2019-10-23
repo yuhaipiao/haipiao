@@ -16,9 +16,11 @@ import com.haipiao.persist.repository.ImageRepository;
 import com.haipiao.persist.repository.TagRepository;
 import com.haipiao.persist.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Component
 public class CreateArticleHandler extends AbstractHandler<CreateArticleRequest, CreateArticleResponse> {
 
     @Autowired
@@ -51,6 +53,7 @@ public class CreateArticleHandler extends AbstractHandler<CreateArticleRequest, 
         this.tagRepository = tagRepository;
     }
 
+    // TODO: use transactional
     @Override
     public CreateArticleResponse execute(CreateArticleRequest req) {
         Article article = new Article();

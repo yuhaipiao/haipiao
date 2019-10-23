@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: registrationsvc
-          image: haipiaodev/registration:0.0.2
+          image: haipiaodev/registration:0.0.3
           imagePullPolicy: Always
           ports:
             - name: registrationsvc
@@ -48,4 +48,4 @@ spec:
       volumes:
         - name: properties-volume
           configMap:
-            name: application-properties
+            name: app-configmap
