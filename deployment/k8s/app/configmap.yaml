@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: application-properties
+  name: app-configmap
 data:
   application.properties: |
     spring.main.banner-mode=off
@@ -12,3 +12,4 @@ data:
     postgres.url=jdbc:postgresql://haipiao-postgres.testk8s.svc:48375/postgres
     postgres.username=postgres
     postgres.password=example
+  postgres: haipiaodev
