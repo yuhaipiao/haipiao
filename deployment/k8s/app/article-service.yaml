@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: article-service
+  labels:
+    app: articlesvc
+spec:
+  type: NodePort
+  ports:
+    - port: 48375
+      targetPort: 8080
+  selector:
+    app: articlesvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: articlesvc
+  labels:
+    app: articlesvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: articlesvc
+  template:
+    metadata:
+      labels:
+        app: articlesvc
+    spec:
+      containers:
+        - name: articlesvc
+          image: haipiaodev/article-service:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - name: articlesvc
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 3
+          volumeMounts:
+            - name: properties-volume
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: properties-volume
+          configMap:
+            name: app-configmap

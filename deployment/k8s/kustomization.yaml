@@ -19,3 +19,4 @@ resources:
   - app/redis.yaml
   - app/registration.yaml
   - app/user-service.yaml
+  - app/article-service.yaml
