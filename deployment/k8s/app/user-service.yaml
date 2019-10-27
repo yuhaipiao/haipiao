@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: usersvc
-          image: haipiaodev/user-service:0.0.6
+          image: haipiaodev/user-service:0.0.1
           imagePullPolicy: Always
           ports:
             - name: usersvc
