@@ -1,21 +1,20 @@
 steps:
-  - name: "gcr.io/cloud-builders/docker"
-    entrypoint: "bash"
-    args: ["-c", "docker login --username=haipiaodev --password=$$PASSWORD"]
-    secretEnv: ["PASSWORD"]
-  - name: "gcr.io/cloud-builders/git"
-    args: [fetch, --tags, --depth=1]
-  - name: 'gcr.io/cloud-builders/gradle'
-    args: ['build']
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', docker build -t haipiaodev/registration:$$REGISTRATION_VERSION registration]
+    args: ['-c', 'docker login --username=haipiaodev --password=$$PASSWORD']
+    secretEnv: ['PASSWORD']
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['clone', '--depth=1', 'https://github.com/HaiPiaoAPP/haipiao.git']
+  - name: 'gcr.io/cloud-builders/gradle'
+    args: ['assemble']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'haipiaodev/registration:$$REGISTRATION_VERSION']
+    args: ['build', '-t=haipiaodev/registration:${_REGISTRATION_VERSION}', 'registration']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'haipiaodev/registration:${_REGISTRATION_VERSION}']
 secrets:
-  - kmsKeyName: "projects/hp-project-256305/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker"
+  - kmsKeyName: 'projects/hp-project-256305/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker'
     secretEnv:
-      PASSWORD: "CiQAKysa5d6F6Qv/FWHPFJaQHZ2//NzULQi9Bkuvn6zC4LgUOiASNAAo9bUBxhLN9FJxYyZnTFJKyT43n98X0N9GuI+igfRP6H6ZXDx3rIrln56A5d6Gn+N55Fw="
+      PASSWORD: 'CiQAKysa5d6F6Qv/FWHPFJaQHZ2//NzULQi9Bkuvn6zC4LgUOiASNAAo9bUBxhLN9FJxYyZnTFJKyT43n98X0N9GuI+igfRP6H6ZXDx3rIrln56A5d6Gn+N55Fw='
 timeout: 600s
-options:
-  env: ['REGISTRATION_VERSION=0.0.3']
+substitutions:
+  _REGISTRATION_VERSION: 0.0.3
