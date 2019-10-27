@@ -29,7 +29,7 @@ public class VendSCHandler extends AbstractHandler<VendSCRequest, VendSCResponse
     public VendSCResponse execute(VendSCRequest request) {
         String sc = securityCodeManager.getSecurityCode(
             request.getCell(), SecurityCodeType.findByCode(request.getType()));
-        var resp = new VendSCResponse();
+        VendSCResponse resp = new VendSCResponse();
         if (sc != null) {
             resp.setSuccess(true);
             resp.setSecurityCode(sc);
