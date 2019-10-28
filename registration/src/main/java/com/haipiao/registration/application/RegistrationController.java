@@ -32,7 +32,7 @@ public class RegistrationController {
     @Autowired
     private VerifySCHandler verifySCHandler;
 
-    @RequestMapping(value = "/security-code", method = RequestMethod.POST)
+    @RequestMapping(value = "/security-code/new", method = RequestMethod.POST)
     public ResponseEntity<VendSCResponse> vendSecurityCode(@RequestParam("cell") String cell,
                                                            @RequestParam("country_code") String countryCode,
                                                            @RequestParam("type") String type) {
@@ -47,7 +47,7 @@ public class RegistrationController {
         return vendSCHandler.handle(request);
     }
 
-    @RequestMapping(value = "/security-code/verification", method = RequestMethod.POST, consumes ="application/json", produces = "application/json")
+    @RequestMapping(value = "/security-code/verify", method = RequestMethod.POST, consumes ="application/json", produces = "application/json")
     public ResponseEntity<VerifySCResponse> verifySecurityCode(@RequestBody VerifySCRequest request) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(request.getCell()));
         Preconditions.checkArgument(StringUtils.isNotEmpty(request.getSecurityCode()));
