@@ -161,7 +161,7 @@ create table comment_reply
 
 create table user_category_relation
 (
-    id          UUID,
+    id          bigserial,
     user_id     integer,
     category_id integer,
     create_ts   timestamp,
@@ -174,7 +174,7 @@ create table user_category_relation
 
 create table user_following_relation
 (
-    id                UUID,
+    id                bigserial,
     user_id           integer,
     following_user_id integer,
     create_ts         timestamp,
@@ -186,7 +186,7 @@ create table user_following_relation
 
 create table album_article_relation
 (
-    id         UUID,
+    id         bigserial,
     album_id   integer,
     article_id integer,
     create_ts  timestamp,
@@ -198,7 +198,7 @@ create table album_article_relation
 
 create table article_like_relation
 (
-    id                               UUID,
+    id                               bigserial,
     liker_id                         integer,
     article_id                       integer,
     liker_follower_count_approximate integer,
@@ -211,7 +211,7 @@ create table article_like_relation
 
 create table article_collect_relation
 (
-    id                                   UUID,
+    id                                   bigserial,
     collector_id                         integer,
     article_id                           integer,
     collector_follower_count_approximate integer,
