@@ -10,11 +10,7 @@ spec:
             backend:
               serviceName: user-service
               servicePort: 48375
-          - path: /security_code
-            backend:
-              serviceName: registration-service
-              servicePort: 48376
-          - path: /verification
+          - path: /security-code/*
             backend:
               serviceName: registration-service
               servicePort: 48376
