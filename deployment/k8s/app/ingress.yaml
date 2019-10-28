@@ -14,3 +14,7 @@ spec:
             backend:
               serviceName: registration-service
               servicePort: 48376
+          - path: /article/*
+            backend:
+              serviceName: article-service
+              servicePort: 48375

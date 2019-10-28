@@ -31,6 +31,15 @@ steps:
     id: docker-push-user-service
     waitFor: ['docker-build-user-service']
 
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t=haipiaodev/article-service:${_ARTICLE_SERVICE_VERSION}', 'article-service']
+    id: docker-build-article-service
+    waitFor: ['gradle']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'haipiaodev/article-service:${_ARTICLE_SERVICE_VERSION}']
+    id: docker-push-article-service
+    waitFor: ['docker-build-article-service']
+
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f=deployment/k8s/app/namespace.yaml']
     id: kubectl-create-ns
@@ -45,6 +54,7 @@ steps:
       - kubectl-create-ns
       - docker-push-registration
       - docker-push-user-service
+      - docker-push-article-service
     env:
       - 'APPLY=true'
       - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
@@ -57,6 +67,6 @@ secrets:
       PASSWORD: 'CiQAKysa5d6F6Qv/FWHPFJaQHZ2//NzULQi9Bkuvn6zC4LgUOiASNAAo9bUBxhLN9FJxYyZnTFJKyT43n98X0N9GuI+igfRP6H6ZXDx3rIrln56A5d6Gn+N55Fw='
 timeout: 600s
 substitutions:
+  _ARTICLE_SERVICE_VERSION: 0.0.1
   _REGISTRATION_VERSION: 0.0.1
   _USER_SERVICE_VERSION: 0.0.1
-  _ARTICLE_SERVICE_VERSION: 0.0.1
