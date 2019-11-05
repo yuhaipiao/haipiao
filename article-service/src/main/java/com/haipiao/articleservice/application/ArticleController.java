@@ -40,7 +40,7 @@ public class ArticleController {
         return getArticleHandler.handle(req);
     }
 
-    @PostMapping("/article")
+    @PostMapping("/article/new")
     @ResponseBody
     public ResponseEntity<CreateArticleResponse> createArticle(@RequestBody CreateArticleRequest req) {
         // TODO: get author ID from session token.
