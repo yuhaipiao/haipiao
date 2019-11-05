@@ -7,7 +7,7 @@ services:
     image: haipiaodev/hp-postgres:0.0.4
     restart: always
     ports:
-      - 48375:5432
+      - 48376:5432
     environment:
       - POSTGRES_PASSWORD=example
 
