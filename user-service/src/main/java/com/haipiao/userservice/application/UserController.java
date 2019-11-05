@@ -50,7 +50,7 @@ public class UserController {
         return getUserHandler.handle(sessionToken, req);
     }
 
-    @PostMapping("/user")
+    @PostMapping("/user/new")
     @ResponseBody
     public ResponseEntity<CreateUserResponse> createUser(@CookieValue("session-token") String temporarySessionToken,
                                                          @RequestBody CreateUserRequest req) {

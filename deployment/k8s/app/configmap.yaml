@@ -11,5 +11,5 @@ data:
     postgres.driverClassName=org.postgresql.Driver
     postgres.url=jdbc:postgresql://haipiao-postgres.testk8s.svc:48375/postgres
     postgres.username=postgres
-    postgres.password=example
+    postgres.password=haipiaodev
   postgres: haipiaodev
