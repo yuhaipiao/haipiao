@@ -30,17 +30,23 @@ public class ArticleController extends HealthzController {
     private CreateArticleHandler createArticleHandler;
 
     @GetMapping("/article/{articleID}")
-    public ResponseEntity<GetArticleResponse> getArticle(@PathVariable(value="articleID") String articleID) {
+    public ResponseEntity<GetArticleResponse> getArticle(
+            @CookieValue("session-token") String sessionToken,
+            @PathVariable(value="articleID") String articleID) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         logger.info("articleID={}", articleID);
         Preconditions.checkArgument(StringUtils.isNotEmpty(articleID));
+        int aid = Integer.parseInt(articleID);
         GetArticleRequest req = new GetArticleRequest();
-        return getArticleHandler.handle(req);
+        req.setId(aid);
+        return getArticleHandler.handle(sessionToken, req);
     }
 
     @PostMapping("/article/new")
-    public ResponseEntity<CreateArticleResponse> createArticle(@RequestBody CreateArticleRequest req) {
-        // TODO: get author ID from session token.
-        req.setAuthorId(1);
-        return createArticleHandler.handle(req);
+    public ResponseEntity<CreateArticleResponse> createArticle(
+            @CookieValue("session-token") String sessionToken,
+            @RequestBody CreateArticleRequest req) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        return createArticleHandler.handle(sessionToken, req);
     }
 }

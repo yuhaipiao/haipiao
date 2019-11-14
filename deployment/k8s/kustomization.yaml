@@ -20,3 +20,4 @@ resources:
   - app/registration.yaml
   - app/user-service.yaml
   - app/article-service.yaml
+  - app/image-service.yaml
