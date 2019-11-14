@@ -1,10 +1,9 @@
 package com.haipiao.articleservice.application;
 
 import com.google.common.base.Preconditions;
+import com.haipiao.common.controller.HealthzController;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
-public class ArticleController {
+@RestController
+public class ArticleController extends HealthzController {
     private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
 
     @Autowired
@@ -32,7 +30,6 @@ public class ArticleController {
     private CreateArticleHandler createArticleHandler;
 
     @GetMapping("/article/{articleID}")
-    @ResponseBody
     public ResponseEntity<GetArticleResponse> getArticle(@PathVariable(value="articleID") String articleID) {
         logger.info("articleID={}", articleID);
         Preconditions.checkArgument(StringUtils.isNotEmpty(articleID));
@@ -41,25 +38,9 @@ public class ArticleController {
     }
 
     @PostMapping("/article/new")
-    @ResponseBody
     public ResponseEntity<CreateArticleResponse> createArticle(@RequestBody CreateArticleRequest req) {
         // TODO: get author ID from session token.
         req.setAuthorId(1);
         return createArticleHandler.handle(req);
-    }
-
-    // TODO: move this to a shared abstract controller.
-    @GetMapping("/healthz")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public String getHealthz() {
-        return "ok";
-    }
-
-    @GetMapping("/")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public String getRoot() {
-        return "ok";
     }
 }
