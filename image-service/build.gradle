@@ -1,0 +1,12 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    compile project(":common")
+    compile 'com.aliyun:aliyun-java-sdk-sts:3.0.0'
+    compile 'com.aliyun:aliyun-java-sdk-core:4.1.0'
+    compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
+}
+
+bootJar {
+    mainClassName = 'com.haipiao.imageservice.application.Application'
+}

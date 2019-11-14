@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 @Component
 @Validated
 @ConfigurationProperties
-@PropertySource("classpath:/resources/config.properties")
+@PropertySource("classpath:/resources/persist.properties")
 public class PersistProperties {
 
     private Postgres postgres;
