@@ -7,6 +7,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.imageservice.application.ImageController;
@@ -34,7 +35,7 @@ public class SecurityTokenHandler extends AbstractHandler<GetSecurityTokenReques
     }
 
     @Override
-    public GetSecurityTokenResponse execute(GetSecurityTokenRequest req) {
+    public GetSecurityTokenResponse execute(GetSecurityTokenRequest req) throws AppException {
         System.out.println(imageUploadProperties.toString());
         // Aliyun document: https://help.aliyun.com/document_detail/100624.html?spm=a2c4g.11186623.6.656.1a6c44fdyhPHYR
         String stsEndpoint = imageUploadProperties.getSts().getStsEndpoint();
