@@ -8,19 +8,19 @@ spec:
   rules:
     - http:
         paths:
-          - path: /user/
+          - path: /user
             backend:
               serviceName: user-service
               servicePort: 48375
-          - path: /security-code/
+          - path: /security-code
             backend:
               serviceName: registration-service
               servicePort: 48376
-          - path: /article/
+          - path: /article
             backend:
               serviceName: article-service
               servicePort: 48375
-          - path: /image/
+          - path: /image
             backend:
               serviceName: image-service
               servicePort: 48375

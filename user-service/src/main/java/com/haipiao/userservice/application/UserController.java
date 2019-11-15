@@ -41,7 +41,7 @@ public class UserController extends HealthzController {
         return getUserHandler.handle(sessionToken, req);
     }
 
-    @PostMapping("/user/new")
+    @PostMapping("/user")
     public ResponseEntity<CreateUserResponse> createUser(@CookieValue("session-token") String temporarySessionToken,
                                                          @RequestBody CreateUserRequest req) {
         req.setOldSessionToken(temporarySessionToken);

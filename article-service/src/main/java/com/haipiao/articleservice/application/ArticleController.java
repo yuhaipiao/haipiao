@@ -42,7 +42,7 @@ public class ArticleController extends HealthzController {
         return getArticleHandler.handle(sessionToken, req);
     }
 
-    @PostMapping("/article/new")
+    @PostMapping("/article")
     public ResponseEntity<CreateArticleResponse> createArticle(
             @CookieValue("session-token") String sessionToken,
             @RequestBody CreateArticleRequest req) {
