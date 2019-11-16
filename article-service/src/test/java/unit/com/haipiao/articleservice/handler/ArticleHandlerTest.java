@@ -20,6 +20,8 @@ import org.assertj.core.util.Preconditions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +39,8 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties
 @ContextConfiguration(classes = {ArticleHandlerTest.Config.class, CommonConfig.class})
 public class ArticleHandlerTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ArticleHandlerTest.class);
 
     @Configuration
     static class Config {
@@ -103,14 +107,15 @@ public class ArticleHandlerTest {
     @Test
     public void testCreateGetArticleHandler() {
         CreateArticleRequest createReq = new CreateArticleRequest();
-        createReq.setAuthorId(userId);
+        createReq.setLoggedInUserId(userId);
         String title = "This is a Title";
-        createReq.setTitile(title);
+        createReq.setTitle(title);
         String textBody = "This text body.";
         createReq.setText(textBody);
         Topic[] topics = new Topic[3];
         for (int i=0; i<topics.length; i++) {
             topics[i] = new Topic();
+            topics[i].setId(i+10);
             topics[i].setName("this is topic"+i);
         }
         createReq.setTopics(topics);

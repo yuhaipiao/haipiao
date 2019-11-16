@@ -19,6 +19,11 @@ public class AppException extends Exception {
         this.statusCode = statusCode;
     }
 
+    public AppException(StatusCode statusCode, String message) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
     public AppException(StatusCode statusCode, Throwable cause) {
         super(cause);
         this.statusCode = statusCode;
