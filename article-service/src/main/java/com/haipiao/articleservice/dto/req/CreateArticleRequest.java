@@ -5,9 +5,11 @@ import com.haipiao.articleservice.dto.common.Tag;
 import com.haipiao.articleservice.dto.common.Topic;
 import com.haipiao.common.req.AbstractRequest;
 
+import java.util.Arrays;
+
 public class CreateArticleRequest extends AbstractRequest {
     @SerializedName("title")
-    private String titile;
+    private String title;
 
     @SerializedName("text")
     private String text;
@@ -21,15 +23,12 @@ public class CreateArticleRequest extends AbstractRequest {
     @SerializedName("topics")
     private Topic[] topics;
 
-    @SerializedName("author_id")
-    private int authorId;
-
-    public String getTitile() {
-        return titile;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitile(String titile) {
-        this.titile = titile;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getText() {
@@ -58,14 +57,6 @@ public class CreateArticleRequest extends AbstractRequest {
 
     public void setTopics(Topic[] topics) {
         this.topics = topics;
-    }
-
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
     }
 
     public static class Image {
@@ -101,5 +92,25 @@ public class CreateArticleRequest extends AbstractRequest {
         public void setHashDigest(byte[] hashDigest) {
             this.hashDigest = hashDigest;
         }
+
+        @Override
+        public String toString() {
+            return "Image{" +
+                    "externalUrl='" + externalUrl + '\'' +
+                    ", tags=" + Arrays.toString(tags) +
+                    ", hashDigest=" + Arrays.toString(hashDigest) +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "CreateArticleRequest{" +
+                "title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", images=" + Arrays.toString(images) +
+                ", videoUrls=" + Arrays.toString(videoUrls) +
+                ", topics=" + Arrays.toString(topics) +
+                '}';
     }
 }
