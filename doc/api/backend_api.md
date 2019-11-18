@@ -38,7 +38,7 @@
 
 **Fail**
 
-```json
+```javascript
 {
   "status_code": <String>,
   "error_message": <String>
