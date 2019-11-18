@@ -16,18 +16,21 @@
 | ---- | ----------- | -------- | ----------------------------------- |
 | example_para | String  | Yes      | 必要的文字描述 |
 
-**Request body**
-```json
+**Request body**:  
+必要的文字描述。（请将代码块的语法设置为`javascript`.）
+
+```javascript
 {
   ... 
 }
 ```
 
-**Response body** :
+**Response body** :  
+必要的文字描述。（请将代码块的语法设置为`javascript`.）
 
 **Success**
 
-```json
+```javascript
 {
   "status_code": "SUCCESS",
   "data": {
@@ -38,7 +41,7 @@
 
 **Fail**
 
-```json
+```javascript
 {
   "status_code": <String>,
   "error_message": <String>
@@ -96,7 +99,7 @@
 
 **Success**
 
-```json
+```javascript
 {
   "status_code": "SUCCESS",
   "data": {
@@ -115,7 +118,7 @@
 
 **Fail**
 
-```json
+```javascript
 {
   "status_code": <String>,
   "error_message": <String>
@@ -140,7 +143,7 @@
 
 **Request body**:
 
-```json
+```javascript
 {
   "categories": [
     <Integer>, ... 
@@ -152,7 +155,7 @@
 
 **Success**:
 
-```json
+```javascript
 {
   "status_code": "SUCCESS"
 }
@@ -160,7 +163,7 @@
 
 **Fail**
 
-```json
+```javascript
 {
   "status_code": <String>,
   "error_message": <String>
