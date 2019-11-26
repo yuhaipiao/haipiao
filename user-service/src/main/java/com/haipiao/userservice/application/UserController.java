@@ -45,6 +45,10 @@ public class UserController extends HealthzController {
     public ResponseEntity<CreateUserResponse> createUser(@CookieValue("session-token") String temporarySessionToken,
                                                          @RequestBody CreateUserRequest req) {
         req.setOldSessionToken(temporarySessionToken);
+        Preconditions.checkArgument(StringUtils.isNotEmpty(req.getName()));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(req.getGender()));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(req.getBirthday()));
+        // profile image url is optional
         return createUserHandler.handle(req);
     }
 }

@@ -6,6 +6,7 @@ import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.redis.RedisClientWrapper;
 import com.haipiao.common.service.SessionService;
+import com.haipiao.common.util.image.resize;
 import com.haipiao.common.util.session.SessionToken;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.enums.Gender;
@@ -49,6 +50,7 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
     public CreateUserResponse execute(CreateUserRequest req) throws AppException {
         User user = new User();
 
+        // TODO: get cellphone number from session somehow and set it in user.
 
         // TODO: validate username e.g. no duplicates
         user.setUserName(req.getName());
@@ -60,6 +62,9 @@ public class CreateUserHandler extends AbstractHandler<CreateUserRequest, Create
             return resp;
         }
         user.setGender(userGender);
+        resize imageResize = new resize(req.getProfileImageUrl());
+        user.setProfileImgUrl(imageResize.resizeToLarge());
+        user.setProfileImgUrlSmall(imageResize.resizeToSmall());
 
         Date date;
         try {
