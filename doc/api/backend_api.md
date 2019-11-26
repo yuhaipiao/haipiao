@@ -55,64 +55,34 @@
 
 ## API 
 
-### 1. 上传图片
-
-先调用阿里云的OSS服务，上传到bucket中，同时拿到返回的url。然后再用拿到的url来调用海漂的上传图片API
-
-### 2. 获取验证码
+### 1. 获取验证码
 
 客户端为当前用户设备请求一个验证码，请求中需包含当前设备（手机）号码。服务器端返回一个6位验证码，一分钟内有效。
+需要根据电话号码和请求的IP做限流保护。
 
-### 3 . 获取验证码
+蓝湖图2。
 
-客户端为当前用户设备请求一个验证码，请求中需包含当前设备（手机）号码。服务器端返回一个6位验证码，一分钟内有效。
-
-### 4. 验证验证码并登陆/注册
-
-客户端请求服务器验证 1. 用户登陆（”login”）或 2. 用户注册（”registration”）或 3. 用户修改手机号（”update_cell”），请求中需包含当前用户手机号码。服务器端需完成验证码验证，如果验证类型为1（用户注册）， 服务端需为请求中的手机号码创建一个新的账户， 如果账户已存在需返回相应错误码。服务器端需返回一个session token。
-
-### 5. 上传或修改用户头像
-
-客户端上传一个图片作为用户头像，请求中需包含session token。
-
-### 6 .设置个人信息
-
-客户端上传用户设置的个人基本信息：性别，生日等，请求中需包含session token。 性别，生日，隐私
-
-### 7. 获取感兴趣的主题 
-
-客户端向服务器端请求一个固定长度的备选“感兴趣的主题”列表。该列表应结合之前用户设置的个人基本信息生成，请求中需包含session token。建议缓存，每次启动应用的时候再fetch
-
-**URL**: `/category?type=[hot|misc|all]`
-
+**URL**： `/security-code`
 **Method**: GET
 
-**Required headers**: `Cookie: session-token=<token>`
-
-**Parameters**:  
+**Parameters**:
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
-| type | String Enum | Yes      | `hot` : 热门 `misc`:其他 `all`:所有 |
+| cell | String  | Yes      | 请求验证码的手机号 |
+| country_code | String  | Yes      | 请求验证码的手机号的国家号（86：中国） |
 
-**Response body** :
+**Response body**:
+
+请求成功将返回一个security code。
 
 **Success**
 
 ```javascript
 {
   "status_code": "SUCCESS",
-  "data": {
-    "all": [
-    	{
-      	  "id": <Interger>, // 分类id ex: 12345
-      	  "name": <String>, // 分类名称 ex: "旅游"
-      	  "cover_image_url": <String>, // 阿里云OSS路径
-    	}, ...
-    ],
-    "hot": [...], 
-    "misc": [...]
-  }
+  "security_code": "098320"
+
 }
 ```
 
@@ -128,10 +98,258 @@
 **Possible error codes**: 
 
 - `INTERNAL_SERVER_ERROR`: 未知服务器端错误。
+- `BAD_REQUEST`: 请求不合规（例如：中国电话号码不满足位数要求）
+- `THROTTLED`: 同一手机号请求过多
+- `EXTERNAL_SERVICE_ERROR`: 无法请求短信服务
 
+### 2. 验证验证码并登陆/注册
 
+客户端请求服务器验证 1. 用户登陆或注册（”login”）或 2. 用户修改手机号（”update_cell”）
+如果验证类型为"login"（登陆或注册）：
+- 当用户（手机号）已存在，直接登陆。
+- 当用户（手机号）不存在，服务端需为请求中的手机号码创建一个新的账户。服务器端需返回一个session token。
 
-### 8. 设置感兴趣的主题 
+**URL**： `/security-code/verification`  
+**Method**: POST
+
+**Request body**:  
+type可以是："login"或"update_cell"
+
+```javascript
+{
+  "country_code": "86",
+  "cell": "12345678900",
+  "type": "login",
+  "code": "314489"
+}
+```
+
+**Response body** :  
+
+请求成功将会返回一个session token和token签发的时间。
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "seesion_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ==",
+  "issued_time": 1571641196070
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `UNAUTHORIZED`: 短信验证码错误
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误
+
+### 3. 请求上传阿里云OSS的token
+
+App请求一个拥有阿里云OSS写权限的token。然后用这个token来上传图片到OSS，上传完成后记录下图片的URL，以便在后续的API中使用。
+请参考此文档（https://help.aliyun.com/document_detail/100624.html?spm=a2c4g.11186623.6.656.1a6c44fdyhPHYR）中实现原理部分。
+需用对同一个用户进行限流。
+
+**URL**： `/image/securitytoken`
+**Method**: GET
+**Required headers**:
+- `Cookie`: 必须包含seesion_token。不支持visitor mode(游客模式)
+
+**Response body** :  
+返回调用阿里云OSS所必须的信息。
+
+**Success**
+
+endpoint为目前使用的阿里云OSS的可用区域的endpoint URL。
+access key id, access key secret，security token和expire time, app需要缓存。
+前三个字段需要在写阿里云OSS操作中提供，阿里云提供了相关SDK。
+前端需要根据expire time来决定是否需要重新请求。
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "endpoint": "http://oss-cn-hangzhou.aliyuncs.com",
+    "access_key_id": "tempaccesskey",
+    "access_key_secret": "someaccesskeysecret",
+    "security_token": "sometoken",
+    "expire_time": 1573113573
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `UNAUTHORIZED`: 没有session token或者session token不合法。
+- `THROTTLED`: 请求频率过高。
+
+### 3. 创建用户
+
+客户端上传用户设置的个人基本信息：名字，性别，生日，头像等，请求中需包含session token。
+
+**URL**： `/user`
+**Method**: POST 
+**Required headers**: `Cookie`
+
+**Request body**:  
+
+profile_image_url为可缺省，即不上传头像。
+name，gender和birthday是必需的。
+gender可以是'M','W','U'。
+
+```javascript
+{
+  "name": "王小明",
+  "gender": "M",
+  "birthday": "1992/01/31",
+  "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/myphoto.jpg"
+}
+```
+
+**Response body**:
+
+返回用户ID和session token。
+App需要缓存用户ID和session token。
+
+**Success**
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "id": 1234,
+  "session_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ=="
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `BAD_REQUEST`: 缺少必需的字段。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 4. 获取感兴趣的主题
+
+客户端向服务器端请求一个的备选“感兴趣的主题”列表。
+该列表应结合之前用户设置的个人基本信息生成。
+请求中需包含session token。
+category列表和对应图片建议缓存。
+
+蓝湖图7和8为需要调用`/category?type=all`。
+
+**URL**: `/category?type=[hot|misc|all]`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Parameters**:  
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String Enum | Yes      | `hot` : 热门 `misc`:其他 `all`:所有 |
+
+**Response body** :
+
+data字段下有且只有`all`, `hot`和`misc`中的一个。
+
+**Success**
+
+`all`: 获取全部的推荐分类：
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "all": [
+      {
+        "id": 11,
+        "name": "工作",
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/work.jpg"
+      },
+      {
+        "id": 12,
+        "name": "旅游",
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/travel.jpg"
+      }
+    ]
+  }
+}
+```
+
+`hot`: 获取热门分类：
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "hot": [
+      {
+        "id": 11,
+        "name": "工作",
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/work.jpg"
+      }
+    ]
+  }
+}
+```
+
+`misc`: 获取其他分类：
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "misc": [
+      {
+        "id": 12,
+        "name": "旅游",
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/travel.jpg"
+      }
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `BAD_REQUEST`: query parameter的类型不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 5. 设置感兴趣的主题 
 
 客户端上传用户设置的5+ 个感兴趣主题，请求中需包含session token。
 
@@ -139,14 +357,18 @@
 
 **Method**: POST
 
-**Required headers**: `Cookie: session-token=<token>`
+**Required headers**:
+`Cookie: session-token=<token>`： 必须包含seesion_token。不支持visitor mode(游客模式)。
 
 **Request body**:
+
+用户选中的主题ID的列表。
 
 ```javascript
 {
   "categories": [
-    <Integer>, ... 
+    11,
+    12
   ]
 }
 ```
@@ -170,9 +392,120 @@
 }
 ```
 
+**Possible error codes**: 
 
+- `BAD_REQUEST`: query parameter的类型不合法。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 9. 关注用户
+### 6. 推荐值得关注的用户
+
+客户端上传用户设置的5+ 个感兴趣主题，请求中需包含session token。
+
+**URL**: `/recommendation/user?context=<string>[&limit=<integer>][&cursor=<string>][&article=<integer>][&user=<integer>]`
+
+**Method**: GET
+
+**Parameters**:  
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| context | string | true |推荐情景: "default" = 默认; "article" = 文章内; "user_profile" = 用户简介  |
+| article | int | true when context=article | article的ID |
+| user | int | true when context=user_profile | user的ID |
+| limit | int | false | 推荐的个数，默认6个 |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Required headers**:
+
+`Cookie: session-token=<token>`： 必须包含seesion_token。不支持visitor mode(游客模式)。
+
+**Response body**:
+
+返回一个用户列表。如果请求的limit比较大，服务器会返回`more_to_follow: true`以及一个cursor同时还有一个不完整的列表（个数<limit）。
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    users: [
+      {
+        id : 1234,
+        name : "张三",
+        profile_image_url : "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg",
+        followers_count : 345,
+        description : "留学申请达人"
+      },
+      {
+        id : 234,
+        name : "李四",
+        profile_image_url : "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/234.jpg",
+        followers_count : 900,
+        description : "聊聊斯坦福那些事"
+      }
+    ],
+    cursor: "arandomstring",
+    more_to_follow: false
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `BAD_REQUEST`: query parameter名称或组合不合法。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 7. 关注用户
+
+设置当前用户关注的单个用户。请求中需包含session token。
+group_id为0表示"全部"（默认）分组。
+蓝湖图9中关注用户时，加入"全部"分组。
+followee_id为被关注的用户的id。
+
+**URL**: `/group/{group_id}/user/{followee_id}`
+
+**Method**: POST
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**: 
+
+- `BAD_REQUEST`: group_id或followee_id不存在。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+TODO: complete APIs below
 
 ### 10. 获取推荐文章列表
 
@@ -250,8 +583,6 @@ pull： 获取所有更新信息
 
 ### 28. 设置关注用户的分组
 
-### 29. 推荐关注的用户
-
 ### 30. 获取用户信息
 
 ### 31. 获取用户所有文章
@@ -263,6 +594,62 @@ pull： 获取所有更新信息
 ### 34. 获取用户的收藏文章列表
 
 ### 35. 获取用户专辑列表
+
+一段对API的文字描述 （正文）
+
+**URL**： `/user/{user_id}/album?limit=<integer>&cursor=<string>`
+TODO: decide how to handle user itself
+
+**Method**: GET  
+
+**Required headers**: `Cookie`
+
+**Parameters**:  
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| limit | Integer  | No      | 请求的列表长度(默认为6) |
+| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+
+**Response body** :  
+
+返回一个专辑列表。如果请求的limit比较大，服务器会返回`more_to_follow: true`以及一个cursor同时还有一个不完整的列表（个数<limit）。
+
+**Success**
+
+```json
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "albums": [
+      {
+         "id": 1234,
+         "title": "有意思的事儿",
+         "cover_image_urls": ["aliyun-abc.oss-cn-hangzhou.aliyuncs.com/cover/1234.jpg"],
+         "articles_count": 1,
+         "followers_count": 15,
+         "followered": false           
+      }
+    ],
+    "cursor": "thisisacursor",
+    "more_to_follow": true
+  }
+}
+```
+
+**Fail**
+
+```json
+{
+  "status_code": <string>,
+  "error_message": <string>
+}
+```
+
+**Possible error codes**: 
+
+- UNAUTHORIZED: session token不存在或不合法
+- INTERNAL_SERVER_ERROR: 未知服务器端错误。
 
 ### 36. 获取用户粉丝列表
 

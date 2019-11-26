@@ -11,6 +11,8 @@ public class CreateUserRequest extends AbstractRequest {
     private String gender;
     @SerializedName("birthday")
     private String birthday;
+    @SerializedName("profile_image_url")
+    private String profileImageUrl;
 
     private transient String oldSessionToken;
 
@@ -36,6 +38,14 @@ public class CreateUserRequest extends AbstractRequest {
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getOldSessionToken() {
