@@ -115,7 +115,7 @@
 **Method**: POST
 
 **Request body**:  
-type可以是`login`或`update_cell`。
+purpose可以是`login`或`update_cell`。
 
 ```javascript
 {
@@ -132,7 +132,6 @@ type可以是`login`或`update_cell`。
 **Success**
 
 ```javascript
-// type = "login" 
 { 
   "status_code": "SUCCESS",
   "data": {
