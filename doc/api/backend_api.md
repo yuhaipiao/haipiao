@@ -62,7 +62,7 @@
 
 蓝湖图2。
 
-**URL**： `/security-code`
+**URL**： `/security-code`  
 **Method**: GET
 
 **Parameters**:
@@ -81,8 +81,7 @@
 ```javascript
 {
   "status_code": "SUCCESS",
-  "security_code": "098320"
-
+  "security_code": "098320" // 测试使用，未来会删除
 }
 ```
 
@@ -104,39 +103,45 @@
 
 ### 2. 验证验证码并登陆/注册
 
-客户端请求服务器验证 1. 用户登陆或注册（”login”）或 2. 用户修改手机号（”update_cell”）
-如果验证类型为"login"（登陆或注册）：
-- 当用户（手机号）已存在，直接登陆。
-- 当用户（手机号）不存在，服务端需为请求中的手机号码创建一个新的账户。服务器端需返回一个session token。
+客户端请求服务器验证 1. 用户登陆或注册（`login`）或 2. 用户修改手机号（`update_cell`）  
+如果验证类型为`login`（登陆或注册）：
+- 当用户（手机号）已存在，直接登陆, 服务器需返回session token(`"type"="SESSION_TOKEN"`)。
+- 当用户（手机号）不存在，服务器端需返回nonce, nonce在使用一次后即失效(`"type"="NONCE"`)。 
+
+如果验证目的为`update_cell` (更新手机号)：
+- 服务器端需返回nonce, nonce在使用一次后即失效(`"type"="NONCE"`)
 
 **URL**： `/security-code/verification`  
 **Method**: POST
 
 **Request body**:  
-type可以是："login"或"update_cell"
+purpose可以是`login`或`update_cell`。
 
 ```javascript
 {
   "country_code": "86",
   "cell": "12345678900",
-  "type": "login",
+  "purpose": "login",
   "code": "314489"
 }
 ```
 
 **Response body** :  
-
-请求成功将会返回一个session token和token签发的时间。
+请求成功将会返回一个token，token类型和token签发的时间。
 
 **Success**
 
 ```javascript
-{
+{ 
   "status_code": "SUCCESS",
-  "seesion_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ==",
-  "issued_time": 1571641196070
+  "data": {
+    "token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ==",
+    "issued_time": 1571641196070,
+    "type": "SESSION_TOKEN" 
+  }
 }
 ```
+
 
 **Fail**
 
@@ -158,8 +163,8 @@ App请求一个拥有阿里云OSS写权限的token。然后用这个token来上�
 请参考此文档（https://help.aliyun.com/document_detail/100624.html?spm=a2c4g.11186623.6.656.1a6c44fdyhPHYR）中实现原理部分。
 需用对同一个用户进行限流。
 
-**URL**： `/image/securitytoken`
-**Method**: GET
+**URL**： `/image/securitytoken`  
+**Method**: GET  
 **Required headers**:
 - `Cookie`: 必须包含seesion_token。不支持visitor mode(游客模式)
 
@@ -200,22 +205,24 @@ access key id, access key secret，security token和expire time, app需要缓存
 - `UNAUTHORIZED`: 没有session token或者session token不合法。
 - `THROTTLED`: 请求频率过高。
 
-### 3. 创建用户
+### 4. 创建用户
 
 客户端上传用户设置的个人基本信息：名字，性别，生日，头像等，请求中需包含session token。
 
-**URL**： `/user`
-**Method**: POST 
+**URL**： `/user`  
+**Method**: POST   
 **Required headers**: `Cookie`
 
 **Request body**:  
 
-profile_image_url为可缺省，即不上传头像。
-name，gender和birthday是必需的。
-gender可以是'M','W','U'。
+`profile_image_url`为可缺省，即不上传头像。
+`name`，`gender`和`birthday`是必需的。
+`gender`可以是`M`(男),`W`(女),`U`(未设置)。
+`nonce`由验证手机验证码获得，只能使用一次。
 
 ```javascript
 {
+  "nonce": "euMA3jBRShPn/K935B9e0A==",  
   "name": "王小明",
   "gender": "M",
   "birthday": "1992/01/31",
@@ -233,8 +240,10 @@ App需要缓存用户ID和session token。
 ```javascript
 {
   "status_code": "SUCCESS",
-  "id": 1234,
-  "session_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ=="
+  "data": {
+    "id": 1234,
+    "session_token": "euMA3jBRShPn/K935B9e0A==:T4p4tBPdDrgD70UbbgGNoQ=="
+  } 
 }
 ```
 
@@ -261,9 +270,8 @@ category列表和对应图片建议缓存。
 
 蓝湖图7和8为需要调用`/category?type=all`。
 
-**URL**: `/category?type=[hot|misc|all]`
-
-**Method**: GET
+**URL**: `/category?type=[hot|misc|all]`  
+**Method**: GET  
 
 **Required headers**: `Cookie: session-token=<token>`
 
@@ -271,13 +279,14 @@ category列表和对应图片建议缓存。
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
-| type | String Enum | Yes      | `hot` : 热门 `misc`:其他 `all`:所有 |
+| type | String Enum | Yes      | `hot`: 热门 `misc`: 其他 `all`: 所有 |
 
 **Response body** :
 
 data字段下有且只有`all`, `hot`和`misc`中的一个。
 
 **Success**
+
 
 `all`: 获取全部的推荐分类：
 
@@ -410,11 +419,11 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
-| context | string | true |推荐情景: "default" = 默认; "article" = 文章内; "user_profile" = 用户简介  |
+| context | string | true |推荐情景: `default`: 默认, `article`: 文章内, `user_profile`:用户简介  |
 | article | int | true when context=article | article的ID |
 | user | int | true when context=user_profile | user的ID |
 | limit | int | false | 推荐的个数，默认6个 |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
 
 **Required headers**:
 
@@ -422,7 +431,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 
 **Response body**:
 
-返回一个用户列表。如果请求的limit比较大，服务器会返回`more_to_follow: true`以及一个cursor同时还有一个不完整的列表（个数<limit）。
+返回一个用户列表。`cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。
 
 **Success**:
 
