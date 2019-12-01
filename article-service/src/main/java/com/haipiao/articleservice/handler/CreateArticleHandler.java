@@ -7,6 +7,7 @@ import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
+import com.haipiao.common.util.image.resize;
 import com.haipiao.persist.entity.Article;
 import com.haipiao.persist.entity.ArticleTopic;
 import com.haipiao.persist.entity.Image;
@@ -139,9 +140,10 @@ public class CreateArticleHandler extends AbstractHandler<CreateArticleRequest, 
                 image.setArticleId(article.getArticleId());
                 image.setPositionIdx(i);
                 image.setExternalUrl(images[i].getExternalUrl());
-                image.setExternalUrlLarge(images[i].getExternalUrl()+"?x-oss-process=style/large");
-                image.setExternalUrlMedium(images[i].getExternalUrl()+"?x-oss-process=style/medium");
-                image.setExternalUrlSmall(images[i].getExternalUrl()+"?x-oss-process=style/small");
+                resize imageResize = new resize(images[i].getExternalUrl());
+                image.setExternalUrlLarge(imageResize.resizeToLarge());
+                image.setExternalUrlMedium(imageResize.resizeToMedium());
+                image.setExternalUrlSmall(imageResize.resizeToSmall());
                 image.setHashDigest(images[i].getHashDigest());
                 // TODO: revisit how to handle image status.
                 image.setStatus(ImageStatus.PUBLISHED);

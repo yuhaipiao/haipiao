@@ -29,7 +29,7 @@ public class RegistrationController extends HealthzController {
     @Autowired
     private VerifySCHandler verifySCHandler;
 
-    @RequestMapping(value = "/security-code", method = RequestMethod.POST)
+    @RequestMapping(value = "/security-code", method = RequestMethod.GET)
     public ResponseEntity<VendSCResponse> vendSecurityCode(@RequestParam("cell") String cell,
                                                            @RequestParam("country_code") String countryCode,
                                                            @RequestParam("type") String type) {
