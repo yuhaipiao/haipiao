@@ -3,6 +3,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(":common")
     compile project(":persist")
+    compile 'com.aliyun:aliyun-java-sdk-core:4.1.0'
 }
 
 bootJar {

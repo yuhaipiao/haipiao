@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import(CommonConfig.class)
-@ComponentScan(basePackages = {"com.haipiao.registration.handler"})
+@ComponentScan(basePackages = {"com.haipiao.registration.property", "com.haipiao.registration.handler"})
 public class AppConfig {
 
     @Bean
