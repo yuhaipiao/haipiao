@@ -261,7 +261,7 @@ App需要缓存用户ID和session token。
 - `BAD_REQUEST`: 缺少必需的字段。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 4. 获取感兴趣的主题
+### 5. 获取感兴趣的主题
 
 客户端向服务器端请求一个的备选“感兴趣的主题”列表。
 该列表应结合之前用户设置的个人基本信息生成。
@@ -358,7 +358,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 - `BAD_REQUEST`: query parameter的类型不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 5. 设置感兴趣的主题 
+### 6. 设置感兴趣的主题 
 
 客户端上传用户设置的5+ 个感兴趣主题，请求中需包含session token。
 
@@ -407,7 +407,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 6. 推荐值得关注的用户
+### 7. 推荐值得关注的用户
 
 客户端上传用户设置的5+ 个感兴趣主题，请求中需包含session token。
 
@@ -476,7 +476,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-### 7. 关注用户
+### 8. 关注用户
 
 设置当前用户关注的单个用户。请求中需包含session token。
 group_id为0表示"全部"（默认）分组。
