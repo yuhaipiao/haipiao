@@ -6,7 +6,8 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - http:
+    - host: haipiao.app
+      http:
         paths:
           - path: /user
             backend:
@@ -24,3 +25,7 @@ spec:
             backend:
               serviceName: image-service
               servicePort: 48375
+  tls:
+    - hosts:
+        - haipiao.app
+      secretName: haipiao-tls
