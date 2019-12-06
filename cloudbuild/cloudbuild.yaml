@@ -59,12 +59,12 @@ steps:
       - 'APPLY=true'
       - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
-      - 'GCLOUD_PROJECT=hp-project-256305'
+      - 'GCLOUD_PROJECT=haipiao-dev'
 
 secrets:
-  - kmsKeyName: 'projects/hp-project-256305/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker'
+  - kmsKeyName: 'projects/haipiao-dev/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker'
     secretEnv:
-      PASSWORD: 'CiQAKysa5d6F6Qv/FWHPFJaQHZ2//NzULQi9Bkuvn6zC4LgUOiASNAAo9bUBxhLN9FJxYyZnTFJKyT43n98X0N9GuI+igfRP6H6ZXDx3rIrln56A5d6Gn+N55Fw='
+      PASSWORD: 'CiQAWjwyCkAV9LwKEbyW6PqT3moVBoQowQdfPND4NaFFnEvNl8cSMwA7UXFh9aDjNWBSB3aAccG4jGaOTDQ5D0dHOK1sSMgUathmwr+OLbsVkOUf26Qxfjl97A=='
 timeout: 600s
 substitutions:
   _ARTICLE_SERVICE_VERSION: 0.0.1
