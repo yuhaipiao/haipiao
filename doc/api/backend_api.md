@@ -288,52 +288,18 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 **Success**
 
 
-`all`: 获取全部的推荐分类：
+`categories`: 获取[all|hot|misc]的推荐分类：
 
 ```javascript
 {
   "status_code": "SUCCESS",
   "data": {
-    "all": [
+    "categories": [
       {
         "id": 11,
         "name": "工作",
         "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/work.jpg"
       },
-      {
-        "id": 12,
-        "name": "旅游",
-        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/travel.jpg"
-      }
-    ]
-  }
-}
-```
-
-`hot`: 获取热门分类：
-
-```javascript
-{
-  "status_code": "SUCCESS",
-  "data": {
-    "hot": [
-      {
-        "id": 11,
-        "name": "工作",
-        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/abc/work.jpg"
-      }
-    ]
-  }
-}
-```
-
-`misc`: 获取其他分类：
-
-```javascript
-{
-  "status_code": "SUCCESS",
-  "data": {
-    "misc": [
       {
         "id": 12,
         "name": "旅游",
@@ -423,7 +389,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 | article | int | true when context=article | article的ID |
 | user | int | true when context=user_profile | user的ID |
 | limit | int | false | 推荐的个数，默认6个 |
-| cursor | string | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | int | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
 
 **Required headers**:
 
@@ -455,7 +421,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
         description : "聊聊斯坦福那些事"
       }
     ],
-    cursor: "arandomstring",
+    cursor: 1,
     more_to_follow: false
   }
 }
