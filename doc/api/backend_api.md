@@ -10,7 +10,7 @@
 **Method**: GET  
 **Required headers**: `Cookie`
 
-**Parameters**:  
+**Parameters**:
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
@@ -48,12 +48,12 @@
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `SOME_ERROR`: 必要的文字描述。
 
 
-## API 
+## 登陆模块 API 
 
 ### 1. 获取验证码
 
@@ -94,7 +94,7 @@
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `INTERNAL_SERVER_ERROR`: 未知服务器端错误。
 - `BAD_REQUEST`: 请求不合规（例如：中国电话号码不满足位数要求）
@@ -152,7 +152,7 @@ purpose可以是`login`或`update_cell`。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `UNAUTHORIZED`: 短信验证码错误
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误
@@ -200,7 +200,7 @@ access key id, access key secret，security token和expire time, app需要缓存
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `UNAUTHORIZED`: 没有session token或者session token不合法。
 - `THROTTLED`: 请求频率过高。
@@ -256,7 +256,7 @@ App需要缓存用户ID和session token。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `BAD_REQUEST`: 缺少必需的字段。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
@@ -275,7 +275,7 @@ category列表和对应图片建议缓存。
 
 **Required headers**: `Cookie: session-token=<token>`
 
-**Parameters**:  
+**Parameters**:
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
@@ -283,10 +283,9 @@ category列表和对应图片建议缓存。
 
 **Response body** :
 
-data字段下有且只有`all`, `hot`和`misc`中的一个。
+请求分类的列表。
 
 **Success**
-
 
 `categories`: 获取[all|hot|misc]的推荐分类：
 
@@ -319,7 +318,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `BAD_REQUEST`: query parameter的类型不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
@@ -367,7 +366,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `BAD_REQUEST`: query parameter的类型不合法。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
@@ -381,7 +380,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 
 **Method**: GET
 
-**Parameters**:  
+**Parameters**:
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
@@ -436,7 +435,7 @@ data字段下有且只有`all`, `hot`和`misc`中的一个。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `BAD_REQUEST`: query parameter名称或组合不合法。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
@@ -474,51 +473,630 @@ followee_id为被关注的用户的id。
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - `BAD_REQUEST`: group_id或followee_id不存在。
 - `UNAUTHORIZED`: 用户未登录或者session token不合法。
 - `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
-TODO: complete APIs below
+## 主页瀑布流模块API
 
-### 10. 获取推荐文章列表
+### 9. 获取推荐文章列表
 
-客户端向服务器端请求一个“推荐文章列表”，请求中需包含session token。服务端交由后端推荐算法生成推荐文章列表。
+根据场景推荐文章：
+discover对应蓝湖图10；
+nearby对应蓝湖图15；
+article_related对应蓝湖图22下方；
+topic_related对应蓝湖图54（点击综合）；
+topic_related_latest对应蓝湖图54（点击最新）；
 
-discover = 发现
+**URL**: `/recommendation/article?context=<string>[&limit=<integer>][&latitude=<float>&longitude=<float>][&article=<integer>][&topic=<integer>]`
 
-nearby = 附近
+**Method**: GET
 
-article_related = 与当前文章相关
+**Parameters**:
 
-topic_related = 与当前话题相关
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| context | string | true | 推荐情景: discover = 发现(首页) <br> nearby = 附近 <br> article_related = 文章相关 <br> topic_related = 话题相关 <br> topic_related_latest = 话题相关最新 |
+| category | string | false | 分类名称，例如："视频"，"学校"，"分类"等。缺省则代表"推荐"(蓝湖图10)。可选分类可以通过调用API#10获得 |
+| article | int | true when context=article | article的ID |
+| user | int | true when context=user_profile | user的ID |
+| latitude | float | true when context=nearby  | 纬度，需与longitude同在 |
+| longitude | float | true when context=nearby  | 经度，需与latitude同在 |
+| limit | int | false | 推荐的个数，默认6个 |
+| cursor | string | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
 
-topic_related_latest = 与当前话题相关且最新 
+**Required headers**: `Cookie: session-token=<token>`
 
-### 11.  我的分类列表
+**Response body**:
 
-客户端向服务器段请求当前用户所选择的“感兴趣主题”列表，请求中需包含session token。
+返回一个用户列表。`cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。
 
-### 12. 点赞
+**Success**:
 
-当前用户为一篇文章点赞，请求中需包含session token。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "cover_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/article-image/1234.jpg",
+        "id": 23,
+        "tittle": "旧金山旅游",
+        "author": {
+          "id": 123,
+          "name": "小明",
+          "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/article-image/1234.jpg"，
+        }
+        "likes": 3,
+        "liked": true,
+      },
+      {...}
+    ]
+  }
+}
+```
 
-### 13. 取消点赞
+**Fail**
 
-当前用户取消之前的点赞， 请求中需包含session token。
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
 
-### 14. 不感兴趣
+**Possible error codes**:
 
-当前用户标记一篇文章为“不感兴趣”，请求中需包含session token。
+- `BAD_REQUEST`: query parameter名称或组合不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 10. 分类列表
+
+请求分类列表：包括用户已经选中的(user)，热门的(hot)，其他的(others)。
+
+**URL**: `/user/{id}/category`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+返回一个分类列表。
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "user": [
+      {
+        "id": 123,
+        "name": "工作"
+      },
+      {
+        "id": 124,
+        "name": "学校"
+      },
+    ],
+    "hot": [
+      {
+        "id": 234,
+        "name": "视频"
+      },
+      {
+        "id": 124,
+        "name": "学校"
+      },
+    ],
+    "others": [
+      {
+        "id": 345,
+        "name": "投资"
+      },
+      {
+        "id": 346,
+        "name": "旅游"
+      },
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 11. 点赞
+
+当前用户为一篇文章点赞。
+最好用message queue实现批量处理。
+
+**URL**: `/article/{id}/like`
+
+**Method**: POST
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 12. 取消点赞
+
+当前用户取消之前的点赞。
+最好用message queue实现批量处理。
+
+**URL**: `/article/{id}/like`
+
+**Method**: DELETE
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 13. 不感兴趣
+
+当前用户标记一篇文章为“不感兴趣”。
+
+**URL**: `/article/{id}/dislike`
+
+**Method**: POST
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
 
 ### 15. 获取关注用户的更新
 
 检查当前用户所关注的用户是否有更新
 
-check：检查是否有更新
+check：用户的关注是否有更新。用于显示蓝湖图10关注标签上的小红点。
 
-pull： 获取所有更新信息
+pull： 获取用户的关注的对象们的更新列表。
+
+**URL**: `/update/following?type=[check|pull]`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String  | Yes      | "check"或者"pull" |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+check:
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "updated": true
+  }
+}
+```
+
+pull:
+image tag中的x和y都是int，x表示的浮点数是0.001*x。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "articles": [
+      {
+        "id": 123,
+        "title": "学习和工作",
+        "author": {
+          "id": 234,
+          "name": "小明",
+          "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
+        },
+        "images": [
+          {
+            "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
+            "tags": [
+              {
+                "text": "",
+                "x": "1234", // 用int来表示定点小数，表示0.1234
+                "y": "345" // 用int来表示定点小数，表示0.0345
+              },
+              {...}
+            ]
+          },
+          {...}
+        ],
+        "topics": ["学习", "工作"]        
+        "collects": 15,
+        "collected": false,
+        "likes": 120,
+        "liked": false,
+        "shares": 28,
+        "comments": {
+          "total_count": 23, 
+          "items": [
+            {
+              "commenter_name": "小红",
+              "commenter_id": 46, // user id
+              "comment": "好赞呀！"
+            },
+            {...}
+          ]
+        }
+      },
+      {...}
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 16. 加载文章
+
+包含是否本人已点赞和已收藏
+
+**URL**: `/article/{id}`
+
+**Method**: GET
+
+**Parameters**:
+
+| Name | Type        | Required | Description                         |
+| ---- | ----------- | -------- | ----------------------------------- |
+| type | String  | Yes      | "check"或者"pull" |
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+tag中的x和y都是int，x表示的浮点数是0.001*x。
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "article": {
+      "id": 123,
+      "title": "学习和工作",
+      "author": {
+        "id": 234,
+        "name": "小明",
+        "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg"
+      },
+      "images": [
+        {
+          "url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/image/1234.jpg",
+          "tags": [
+            {
+              "text": "",
+              "x": "1234", // 用int来表示定点小数，表示0.1234
+              "y": "345" // 用int来表示定点小数，表示0.0345
+            },
+            {...}
+          ]
+        },
+        {...}
+      ],
+      "topics": ["学习", "工作"]      
+      "collects": 15,
+      "collected": false,
+      "likes": 120,
+      "liked": false,
+      "shares": 28,
+      "comments": {
+        "total_count": 23, 
+        "items": [
+          {
+            "commenter_name": "小红",
+            "commenter_id": 46, // user id
+            "comment": "好赞呀！"
+          },
+          {...}
+        ]
+      }
+      }
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: query parameter不存在或不合法。
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 17.  获取用户分组
+
+获取当前用户所创建的所有“分组”。
+蓝湖图13。
+
+**URL**: `/user/{id}/group`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "groups": [
+      {
+        "id": "374",
+        "name": "朋友"
+      },
+      {
+        "id": "737",
+        "name": "有趣"
+      },
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 18. 获取默认分组
+
+获取系统的默认分组。
+蓝湖图13。
+
+**URL**: `/user/{id}/group`
+
+**Method**: GET
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Response body**:
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+  "data": {
+    "groups": [
+      {
+        "id": "143",
+        "name": "全部关注"
+      },
+      {
+        "id": "482",
+        "name": "特别关注"
+      },
+    ]
+  }
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: session token不存在或不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 19. 删除分组
+
+需要检查分组是否属于该用户。
+
+**URL**: `/group/{id}`
+
+**Method**: DELETE
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+### 20. 新建分组
+
+为某用户新建关注分组。
+蓝湖图14。
+
+**URL**: `/group`
+
+**Method**: POST
+
+**Required headers**: `Cookie: session-token=<token>`
+
+**Request Body**
+
+创建一个分组的时候，可以带上一个用户ID，该ID会被加入到该分组
+
+```javascript
+{
+  "user_id": 984, // 可缺省，另一个用户的user id
+  "group_name": "同学"
+}
+```
+
+**Success**:
+
+```javascript
+{
+  "status_code": "SUCCESS",
+}
+```
+
+**Fail**
+
+```javascript
+{
+  "status_code": <String>,
+  "error_message": <String>
+}
+```
+
+**Possible error codes**:
+
+- `BAD_REQUEST`: request格式不合法。
+- `UNAUTHORIZED`: 用户未登录或者session token不合法。
+- `INTERNAL_SERVER_ERROR`: 未知服务器错误。
+
+## TODO: complete APIs below
+
+## 用户模块API
+
+
+## 搜索系统API
+
+搜索系统需要搭建elastic search或Solr。
+
+### XX. 搜索文章 
+
+### XX. 搜索话题
+
+### XX. 搜索用户 (21)
+
+### XX. 获取热搜列表（前N）（16）
+
+### XX. 自动补全 （17）
+
+
+## 通知系统API
 
 ### 16. 通知是否有更新
 
@@ -528,31 +1106,6 @@ check：检查是否有更新
 
 pull： 获取所有更新信息
 
-### 17. 加载文章
-
-包含是否本人已点赞和已收藏
-
-### 18.  获取用户分组
-
-获取当前用户所创建的所有“分组”
-
-### 19. 获取默认分组
-
-获取系统的默认分组
-
-### 20. 删除分组
-
-### 21. 新建分组
-
-### 22. 获取热搜列表（前N）（16）
-
-### 23. 自动补全 （17）
-
-### 24. 搜索文章 
-
-### 25. 搜索话题
-
-### 26. 搜索用户 (21)
 
 ### 27. 举报违规文章 (21)
 
@@ -562,7 +1115,7 @@ pull： 获取所有更新信息
 
 ### 31. 获取用户所有文章
 
-###  32. 更改以关注用户的分组
+###  32. 更改已关注用户的分组
 
 ### 33. 取消关注
 
@@ -579,7 +1132,7 @@ TODO: decide how to handle user itself
 
 **Required headers**: `Cookie`
 
-**Parameters**:  
+**Parameters**:
 
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
@@ -621,7 +1174,7 @@ TODO: decide how to handle user itself
 }
 ```
 
-**Possible error codes**: 
+**Possible error codes**:
 
 - UNAUTHORIZED: session token不存在或不合法
 - INTERNAL_SERVER_ERROR: 未知服务器端错误。
