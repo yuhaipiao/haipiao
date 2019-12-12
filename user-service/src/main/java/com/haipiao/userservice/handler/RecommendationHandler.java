@@ -65,7 +65,7 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
     @Override
     protected RecommendationResponse execute(RecommendationRequest request) throws AppException {
         RecommendationResponse response = new RecommendationResponse(StatusCode.SUCCESS);
-        int thisUserId = 0;
+        int thisUserId = request.getLoggedInUserId();
         Optional<User> optionalUser = userRepository.findById(thisUserId);
         User thisUser = null;
         if (optionalUser.isPresent()){
@@ -74,13 +74,14 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
 
         List<User> recommendedUserList = chooseRecommended
                 .chooseRecommended(request.getContext())
-                .recommendedUsers(thisUser);
+                .recommendedUsers(thisUser, request);
 
         List<RecommendationInfoDto> responseList = recommendedUserList.stream()
                 .filter(Objects::nonNull)
                 .map(u -> new RecommendationInfoDto(u.getUserId(), u.getRealName(), u.getProfileImgUrl(), findUserFollowee(u.getUserId()), u.getSignature()))
                 .collect(Collectors.toList());
 
+        // TODO 根据文档更新修改
         int cursor = request.getCursor();
         int limit = request.getLimit() == 0 ? 6 : request.getLimit();
         boolean moreToFollow = false;

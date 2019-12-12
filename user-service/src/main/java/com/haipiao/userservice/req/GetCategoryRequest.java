@@ -3,6 +3,9 @@ package com.haipiao.userservice.req;
 import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.req.AbstractRequest;
 
+/**
+ * @author wnagjipeng
+ */
 public class GetCategoryRequest extends AbstractRequest {
 
     @SerializedName("type")

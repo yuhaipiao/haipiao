@@ -82,10 +82,12 @@ public class UserController extends HealthzController {
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<RecommendationResponse> recommendation(@CookieValue("session-token") String sessionToken,
                                                                  @RequestParam("context") String context,
+                                                                 @RequestParam("article") int article,
+                                                                 @RequestParam("user") int user,
                                                                  @RequestParam("limit") int limit,
                                                                  @RequestParam("cursor") int cursor){
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
-        RecommendationRequest request = new RecommendationRequest(context, limit, cursor);
+        RecommendationRequest request = new RecommendationRequest(context, article, user, limit, cursor);
         return recommendationHandler.handle(sessionToken, request);
     }
 

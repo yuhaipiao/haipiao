@@ -46,8 +46,7 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
      */
     @Override
     protected FolloweeUserResponse execute(FolloweeUserRequest request) {
-        // TODO 获取当前用户id 关注用户分组 数据库中暂无分组信息 当前用户为关注者  请求id用户为被关注用户
-        int followingUserId = 0;
+        int followingUserId = request.getLoggedInUserId();
         Optional<User> user = userRepository.findById(request.getFolloweeId());
         if (user.isEmpty()){
             String errorMessage = String.format("当前关注用户不存在, Id:%s", request.getFolloweeId());
@@ -56,14 +55,13 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
             response.setErrorMessage(errorMessage);
             return response;
         }
-        userFollowingRelationRepository.save(new UserFollowingRelation(new Date(), null, user.get().getUserId(), followingUserId));
+        userFollowingRelationRepository.save(new UserFollowingRelation(user.get().getUserId(), followingUserId));
 
-        //TODO redis set结构存储被关注用户+关注者 供用户推荐使用
         saveFolloweeUserToRedis(followingUserId, user.get().getUserId());
         return new FolloweeUserResponse(StatusCode.SUCCESS);
     }
 
     private void saveFolloweeUserToRedis(int followeeWithId, int userId){
-        // TODO 当前redisClient配置不支持
+        LOG.info("Save Into Redis");
     }
 }

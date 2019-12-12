@@ -2,6 +2,7 @@ package com.haipiao.persist.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author wangjipeng
@@ -24,8 +25,7 @@ public class UserFollowingRelation extends BaseEntity{
     public UserFollowingRelation() {
     }
 
-    public UserFollowingRelation(Date createTs, Date updateTs, int userId, int followingUserId) {
-        super(createTs, updateTs);
+    public UserFollowingRelation(int userId, int followingUserId) {
         this.userId = userId;
         this.followingUserId = followingUserId;
     }
@@ -52,5 +52,29 @@ public class UserFollowingRelation extends BaseEntity{
 
     public void setFollowingUserId(int followingUserId) {
         this.followingUserId = followingUserId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserFollowingRelation)) return false;
+        UserFollowingRelation that = (UserFollowingRelation) o;
+        return getId() == that.getId() &&
+                getUserId() == that.getUserId() &&
+                getFollowingUserId() == that.getFollowingUserId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserId(), getFollowingUserId());
+    }
+
+    @Override
+    public String toString() {
+        return "UserFollowingRelation{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", followingUserId=" + followingUserId +
+                '}';
     }
 }

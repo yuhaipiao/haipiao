@@ -2,6 +2,7 @@ package com.haipiao.persist.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author wangjipeng
@@ -24,8 +25,7 @@ public class UserCategoryRelation extends BaseEntity{
     public UserCategoryRelation() {
     }
 
-    public UserCategoryRelation(Date createTs, Date updateTs, int userId, int categoryId) {
-        super(createTs, updateTs);
+    public UserCategoryRelation(int userId, int categoryId) {
         this.userId = userId;
         this.categoryId = categoryId;
     }
@@ -52,6 +52,21 @@ public class UserCategoryRelation extends BaseEntity{
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserCategoryRelation)) return false;
+        UserCategoryRelation that = (UserCategoryRelation) o;
+        return getId() == that.getId() &&
+                getUserId() == that.getUserId() &&
+                getCategoryId() == that.getCategoryId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserId(), getCategoryId());
     }
 
     @Override

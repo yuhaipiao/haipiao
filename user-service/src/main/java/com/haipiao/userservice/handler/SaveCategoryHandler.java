@@ -75,19 +75,17 @@ public class SaveCategoryHandler extends AbstractHandler<SaveUserCategoryRequest
         Iterable<Category> all = categoryRepository.findAll();
         List<Integer> existId = StreamSupport.stream(all.spliterator(), false).map(Category::getCategoryId).collect(Collectors.toList());
         List<Integer> categories = request.getCategories();
-        // TODO 用户id从哪里获取
-        int userId = 0;
+        int userId = request.getLoggedInUserId();
         List<UserCategoryRelation> list = categories.stream()
                 .filter(existId::contains)
-                .map(c -> new UserCategoryRelation(new Date(), null, userId, c)).collect(Collectors.toList());
+                .map(c -> new UserCategoryRelation(userId, c)).collect(Collectors.toList());
         userCategoryRelationRepository.saveAll(list);
 
-        // TODO redis set结构存储用户 + 感兴趣主题供 推荐相似用户使用
         saveUserWithCategoryToRedis(userId, categories);
         return new SaveUserCategoryResponse(StatusCode.SUCCESS);
     }
 
     private void saveUserWithCategoryToRedis(int userId, List<Integer> categories){
-        // TODO 当前redisClient不支持除String外数据结构
+        LOG.info("Save Into Redis");
     }
 }

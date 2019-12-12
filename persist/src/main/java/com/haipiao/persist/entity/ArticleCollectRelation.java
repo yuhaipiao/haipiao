@@ -2,6 +2,7 @@ package com.haipiao.persist.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author wangjipeng
@@ -27,8 +28,7 @@ public class ArticleCollectRelation extends BaseEntity{
     public ArticleCollectRelation() {
     }
 
-    public ArticleCollectRelation(Date createTs, Date updateTs, int collectorId, int articleId, int collectorFollowerCountApproximate) {
-        super(createTs, updateTs);
+    public ArticleCollectRelation(int collectorId, int articleId, int collectorFollowerCountApproximate) {
         this.collectorId = collectorId;
         this.articleId = articleId;
         this.collectorFollowerCountApproximate = collectorFollowerCountApproximate;
@@ -64,5 +64,31 @@ public class ArticleCollectRelation extends BaseEntity{
 
     public void setCollectorFollowerCountApproximate(int collectorFollowerCountApproximate) {
         this.collectorFollowerCountApproximate = collectorFollowerCountApproximate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArticleCollectRelation)) return false;
+        ArticleCollectRelation that = (ArticleCollectRelation) o;
+        return getId() == that.getId() &&
+                getCollectorId() == that.getCollectorId() &&
+                getArticleId() == that.getArticleId() &&
+                getCollectorFollowerCountApproximate() == that.getCollectorFollowerCountApproximate();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCollectorId(), getArticleId(), getCollectorFollowerCountApproximate());
+    }
+
+    @Override
+    public String toString() {
+        return "ArticleCollectRelation{" +
+                "id=" + id +
+                ", collectorId=" + collectorId +
+                ", articleId=" + articleId +
+                ", collectorFollowerCountApproximate=" + collectorFollowerCountApproximate +
+                '}';
     }
 }

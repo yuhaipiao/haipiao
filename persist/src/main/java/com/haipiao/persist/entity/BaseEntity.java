@@ -10,14 +10,6 @@ public abstract class BaseEntity implements IEntity {
     @CreatedDate private Date createTs;
     @LastModifiedDate private Date updateTs;
 
-    public BaseEntity() {
-    }
-
-    public BaseEntity(Date createTs, Date updateTs) {
-        this.createTs = createTs;
-        this.updateTs = updateTs;
-    }
-
     public Date getCreateTs() {
         return createTs;
     }
