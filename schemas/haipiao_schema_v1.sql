@@ -11,46 +11,70 @@ create table category
 -- 用户表
 create table hp_user
 (
-    user_id         serial,       -- 主键
-    password_digest bytea,        -- 用户密码sha256
-    nick_name       varchar(64),  -- 用户昵称
-    email           varchar(64),  -- 用户邮箱
-    phone           varchar(64),  -- 用户手机号
-    tc_accepted     boolean,      -- 当前用户是否接受最新的用户条款（T&C: Term & Condition）
-    birthday        date,         -- 用户生日
-    gender          char(1),      -- 性别代码: M（男），F（女），U（未知）
-    real_name       varchar(64),  -- 用后真实姓名
-    address_1       varchar(128), -- 地址（第一行）
-    address_2       varchar(128), -- 地址（第二行）
-    city            varchar(128), -- 城市
-    region          varchar(64),  -- 省/州
-    country         varchar(32),  -- 国家
-    zip_code        varchar(16),  -- 邮编
-    profile_img_url varchar(256), -- 用户头像链接
+    user_id               serial,       -- 主键
+    password_digest       bytea,        -- 用户密码sha256
+    nick_name             varchar(64),  -- 用户昵称
+    email                 varchar(64),  -- 用户邮箱
+    phone                 varchar(64),  -- 用户手机号
+    tc_accepted           boolean,      -- 当前用户是否接受最新的用户条款（T&C: Term & Condition）
+    birthday              date,         -- 用户生日
+    gender                char(1),      -- 性别代码: M（男），F（女），U（未知）
+    real_name             varchar(64),  -- 用后真实姓名
+    address_1             varchar(128), -- 地址（第一行）
+    address_2             varchar(128), -- 地址（第二行）
+    city                  varchar(128), -- 城市
+    region                varchar(64),  -- 省/州
+    country               varchar(32),  -- 国家
+    zip_code              varchar(16),  -- 邮编
+    profile_img_url       varchar(256), -- 用户头像链接
     profile_img_url_small varchar(256), -- 用户头像缩略图链接
-    organization    varchar(128), -- 用户所在组织（公司，学校）
-    signature       varchar(256), -- 个性签名
-    create_ts       timestamp,
-    update_ts       timestamp,
+    organization          varchar(128), -- 用户所在组织（公司，学校）
+    signature             varchar(256), -- 个性签名
+    role                  int,          -- 用户类型 0（Admin）， 1（Customer）
+    create_ts             timestamp,
+    update_ts             timestamp,
     constraint user_pk primary key (user_id)
 );
 
-create index hp_user_index0 ON hp_user(phone);
+create table user_privacy_settings
+(
+    user_id         serial,
+    comment_setting int,
+    mention_setting int,
+    contact_setting int,
+    weibo_setting   int,
+    constraint user_privacy_settings_pk primary key (user_id),
+    constraint user_privacy_settings_fk foreign key (user_id) references hp_user (user_id)
+);
+
+create index hp_user_index0 ON hp_user (phone);
 
 -- 持久话会话表： 用户登录后会获得一个session token。移动端可缓存，30天有效。
 create table user_session
 (
-    session_id serial, -- 主键
-    user_id   integer, -- session所有者id
-    selector  bytea,   -- 关于selector/validator的定义请参照：https://paragonie.com/blog/2017/02/split-tokens-token-based-authentication-protocols-without-side-channels
+    session_id       serial,  -- 主键
+    user_id          integer, -- session所有者id
+    selector         bytea,   -- 关于selector/validator的定义请参照：https://paragonie.com/blog/2017/02/split-tokens-token-based-authentication-protocols-without-side-channels
     validator_digest bytea,
-    create_ts timestamp,
-    update_ts timestamp,
+    create_ts        timestamp,
+    update_ts        timestamp,
     constraint user_session_pk primary key (user_id),
     constraint user_session_fk foreign key (user_id) references hp_user (user_id)
 );
 
-create index user_session_index0 ON user_session(selector);
+create index user_session_index0 ON user_session (selector);
+
+-- 用户分组表
+create table user_group
+(
+    group_id  serial,  -- 主键
+    owner_id  integer, -- 分组创建者的id
+    name      integer, -- 分组名
+    create_ts timestamp,
+    update_ts timestamp,
+    constraint user_group_pk primary key (group_id),
+    constraint user_group_fk foreign key (owner_id) references hp_user (user_id)
+);
 
 -- 专辑表
 create table album
@@ -104,13 +128,13 @@ create table image
 -- 标签表：图像上可加标签。标签上可有文字。
 create table tag
 (
-    tag_id              serial,      -- 主键
-    img_id              serial,      -- 标签所在图像id
-    x_position          integer,     -- 标签位置横坐标（TODO：应该使用double）
-    y_position          integer,     -- 标签位置纵坐标（TODO：应该使用double）
-    text                varchar(16), -- 标签上文字
-    create_ts           timestamp,
-    update_ts           timestamp,
+    tag_id     serial,      -- 主键
+    img_id     serial,      -- 标签所在图像id
+    x_position integer,     -- 标签位置横坐标（TODO：应该使用double）
+    y_position integer,     -- 标签位置纵坐标（TODO：应该使用double）
+    text       varchar(16), -- 标签上文字
+    create_ts  timestamp,
+    update_ts  timestamp,
     constraint tag_pk primary key (tag_id),
     constraint tag_fk1 foreign key (img_id) references image (img_id)
 );
@@ -191,11 +215,13 @@ create table user_following_relation
     id                bigserial, -- 行id，主键
     user_id           integer,   -- 被关注用户id
     following_user_id integer,   -- 关注者id
+    group_id          integer,   -- 被关注用户所在分组的id
     create_ts         timestamp,
     update_ts         timestamp,
     constraint user_following_relation_pk primary key (id),
     constraint user_following_relation_fk1 foreign key (user_id) references hp_user (user_id),
-    constraint user_following_relation_fk2 foreign key (following_user_id) references hp_user (user_id)
+    constraint user_following_relation_fk2 foreign key (following_user_id) references hp_user (user_id),
+    constraint user_following_relation_fk3 foreign key (group_id) references user_group (group_id)
 );
 
 -- 专辑与文章关系表（N : N）
@@ -210,6 +236,20 @@ create table album_article_relation
     constraint album_article_relation_pk primary key (id),
     constraint album_article_relation_fk1 foreign key (album_id) references album (album_id),
     constraint album_article_relation_fk2 foreign key (article_id) references article (article_id)
+);
+
+-- 用户和专辑关系表
+-- 一个用户可以关注多个专辑， 一个专辑可被多个用户关注
+create table user_album_relation
+(
+    id          bigserial, -- 行id，主键
+    follower_id integer,   -- 关注者id
+    album_id    integer,   -- 所关注专辑的id
+    create_ts   timestamp,
+    update_ts   timestamp,
+    constraint user_album_relation_pk primary key (id),
+    constraint user_album_relation_fk1 foreign key (album_id) references album (album_id),
+    constraint user_album_relation_fk2 foreign key (follower_id) references article (article_id)
 );
 
 -- 文章与点赞用户关系表（N : N）
