@@ -32,7 +32,7 @@ public class ArticleRecommended implements Recommended{
     @Override
     public List<User> recommendedUsers(User user, RecommendationRequest request) {
         int articleId = request.getArticleId();
-        List<ArticleCollectRelation> articles = articleCollectRelationRepository.getListByArticleId(articleId);
+        List<ArticleCollectRelation> articles = articleCollectRelationRepository.getArticleCollectRelationsByArticleId(articleId);
         if (articles.size() == 0){
             return userRepository.getUserByFansCount();
         }

@@ -15,5 +15,5 @@ public interface ArticleCollectRelationRepository extends CrudRepository<Article
      * @param articleId
      * @return
      */
-    List<ArticleCollectRelation> getListByArticleId(int articleId);
+    List<ArticleCollectRelation> getArticleCollectRelationsByArticleId(int articleId);
 }
