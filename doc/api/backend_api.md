@@ -287,6 +287,8 @@ category列表和对应图片建议缓存。
 
 **Success**
 
+`categories`: 获取[all|hot|misc]的推荐分类：
+
 ```javascript
 {
   "status_code": "SUCCESS",
@@ -386,7 +388,7 @@ category列表和对应图片建议缓存。
 | article | int | true when context=article | article的ID |
 | user | int | true when context=user_profile | user的ID |
 | limit | int | false | 推荐的个数，默认6个 |
-| cursor | string | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | int | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
 
 **Required headers**:
 
@@ -418,7 +420,7 @@ category列表和对应图片建议缓存。
         description : "聊聊斯坦福那些事"
       }
     ],
-    cursor: "arandomstring",
+    cursor: 1,
     more_to_follow: false
   }
 }

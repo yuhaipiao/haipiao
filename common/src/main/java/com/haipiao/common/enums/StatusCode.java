@@ -2,6 +2,9 @@ package com.haipiao.common.enums;
 
 public enum StatusCode {
 
+    /**
+     * 响应状态码
+     */
     SUCCESS("success"),
     BAD_REQUEST("bad request body"),
     UNAUTHORIZED("unauthorized request"),
