@@ -51,7 +51,7 @@ public class GetCategoryHandler extends AbstractHandler<GetCategoryRequest, GetC
                 .filter(Objects::nonNull)
                 .map(c -> new CategoryInfoDto(c.getCategoryId(), c.getCategoryName(), ""))
                 .collect(Collectors.toList());
-        data.setList(list);
+        data.setCategories(list);
         GetCategoryResponse response = new GetCategoryResponse(StatusCode.SUCCESS);
         response.setData(data);
         return response;

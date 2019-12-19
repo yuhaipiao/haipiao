@@ -55,7 +55,7 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
             response.setErrorMessage(errorMessage);
             return response;
         }
-        userFollowingRelationRepository.save(new UserFollowingRelation(user.get().getUserId(), followingUserId));
+        userFollowingRelationRepository.save(new UserFollowingRelation(user.get().getUserId(), followingUserId, request.getGroupId()));
 
         saveFolloweeUserToRedis(followingUserId, user.get().getUserId());
         return new FolloweeUserResponse(StatusCode.SUCCESS);

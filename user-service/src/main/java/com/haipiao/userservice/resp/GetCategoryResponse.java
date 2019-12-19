@@ -16,14 +16,14 @@ public class GetCategoryResponse extends AbstractResponse<GetCategoryResponse.Da
     public static class Data {
 
         @SerializedName("categories")
-        private List<CategoryInfoDto> list;
+        private List<CategoryInfoDto> categories;
 
-        public List<CategoryInfoDto> getList() {
-            return list;
+        public List<CategoryInfoDto> getCategories() {
+            return categories;
         }
 
-        public void setList(List<CategoryInfoDto> list) {
-            this.list = list;
+        public void setCategories(List<CategoryInfoDto> categories) {
+            this.categories = categories;
         }
     }
 }

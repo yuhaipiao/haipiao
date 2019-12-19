@@ -36,6 +36,9 @@ public class UserController extends HealthzController {
     @Autowired
     private FolloweeUserHandler followeeUserHandler;
 
+    @Autowired
+    private GetUserAllCategoryHandler getUserAllCategoryHandler;
+
     @GetMapping("/user/{userID}/summary")
     public ResponseEntity<GetUserResponse> getUserById(@PathVariable(value="userID") String userID) {
         logger.info("userID={}", userID);
@@ -66,6 +69,7 @@ public class UserController extends HealthzController {
     @GetMapping("/category")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<GetCategoryResponse> category(@CookieValue("session-token") String sessionToken, @RequestParam("type") String type){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         GetCategoryRequest request = new GetCategoryRequest(type);
         Preconditions.checkArgument(StringUtils.isNotEmpty(type));
         return getCategoryHandler.handle(sessionToken, request);
@@ -75,6 +79,7 @@ public class UserController extends HealthzController {
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<SaveUserCategoryResponse> saveUserCategory(@CookieValue("session-token") String sessionToken,
                                                                      @RequestBody SaveUserCategoryRequest request){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         return saveCategoryHandler.handle(sessionToken, request);
     }
 
@@ -86,6 +91,7 @@ public class UserController extends HealthzController {
                                                                  @RequestParam("user") int user,
                                                                  @RequestParam("limit") int limit,
                                                                  @RequestParam("cursor") int cursor){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
         RecommendationRequest request = new RecommendationRequest(context, article, user, limit, cursor);
         return recommendationHandler.handle(sessionToken, request);
@@ -96,9 +102,42 @@ public class UserController extends HealthzController {
     public ResponseEntity<FolloweeUserResponse> followeeUser(@CookieValue("session-token") String sessionToken,
                                          @PathVariable(value="group_id") int groupId,
                                          @PathVariable(value="followee_id") int followeeId){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(groupId)));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(followeeId)));
         FolloweeUserRequest request = new FolloweeUserRequest(groupId, followeeId);
         return followeeUserHandler.handle(sessionToken, request);
+    }
+
+    /**
+     * API-10
+     * id为当前选中用户id
+     * 请求分类列表：包括用户已经选中的(user)，热门的(hot)，其他的(others)。
+     */
+    @GetMapping("/user/{id}/category")
+    @Transactional(rollbackFor = Throwable.class)
+    public ResponseEntity<GetUserAllCategoryResponse> getUserAllCategory(@CookieValue("session-token") String sessionToken,
+                                   @PathVariable(value="id") int id){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
+        return getUserAllCategoryHandler.handle(new GetUserAllCategoryRequest(id));
+    }
+
+    /**
+     * API-15
+     * 获取关注用户的更新
+     * 检查当前用户所关注的用户是否有更新
+     * check：用户的关注是否有更新。用于显示蓝湖图10关注标签上的小红点。
+     * pull： 获取用户的关注的对象们的更新列表。
+     * @param sessionToken
+     * @param type
+     */
+    @GetMapping("/update/following")
+    @Transactional(rollbackFor = Throwable.class)
+    public void updateFollowing(@CookieValue("session-token") String sessionToken,
+                                @RequestParam(value="type") String type){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(type));
+
     }
 }
