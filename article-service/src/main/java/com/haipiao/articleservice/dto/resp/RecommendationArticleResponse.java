@@ -1,13 +1,9 @@
 package com.haipiao.articleservice.dto.resp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +19,10 @@ public class RecommendationArticleResponse extends AbstractResponse<Recommendati
 
         @SerializedName("articles")
         private List<ArticleData> articles;
+
+        public Data(List<ArticleData> articles) {
+            this.articles = articles;
+        }
 
         public static class ArticleData {
 
@@ -44,6 +44,15 @@ public class RecommendationArticleResponse extends AbstractResponse<Recommendati
             @SerializedName("author")
             private Author author;
 
+            public ArticleData(String coverImageUrl, int id, String tittle, int likes, String liked, Author author) {
+                this.coverImageUrl = coverImageUrl;
+                this.id = id;
+                this.tittle = tittle;
+                this.likes = likes;
+                this.liked = liked;
+                this.author = author;
+            }
+
             public static class Author {
                 @SerializedName("id")
                 private int id;
@@ -53,6 +62,12 @@ public class RecommendationArticleResponse extends AbstractResponse<Recommendati
 
                 @SerializedName("profile_image_url")
                 private String profileImageUrl;
+
+                public Author(int id, String name, String profileImageUrl) {
+                    this.id = id;
+                    this.name = name;
+                    this.profileImageUrl = profileImageUrl;
+                }
 
                 public int getId() {
                     return id;

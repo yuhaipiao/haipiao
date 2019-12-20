@@ -8,6 +8,13 @@ public class GetArticleRequest extends AbstractRequest {
     @SerializedName("id")
     private int id;
 
+    public GetArticleRequest() {
+    }
+
+    public GetArticleRequest(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

@@ -16,5 +16,5 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
      * @param type
      * @return
      */
-    List<Category> findByType(int type);
+    List<Category> findByType(String type);
 }

@@ -1,13 +1,8 @@
 package com.haipiao.userservice.resp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author wangjipeng

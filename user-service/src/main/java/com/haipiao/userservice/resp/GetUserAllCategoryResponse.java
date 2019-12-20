@@ -3,6 +3,7 @@ package com.haipiao.userservice.resp;
 import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
+import com.haipiao.userservice.resp.dto.GetUserAllCategoryDto;
 
 import java.util.List;
 
@@ -28,39 +29,6 @@ public class GetUserAllCategoryResponse extends AbstractResponse<GetUserAllCateg
 
         public Data() {
         }
-
-       public static class GetUserAllCategoryDto{
-
-           @SerializedName("id")
-           private int id;
-
-           @SerializedName("name")
-           private String name;
-
-           public GetUserAllCategoryDto() {
-           }
-
-           public GetUserAllCategoryDto(int id, String name) {
-               this.id = id;
-               this.name = name;
-           }
-
-           public int getId() {
-               return id;
-           }
-
-           public void setId(int id) {
-               this.id = id;
-           }
-
-           public String getName() {
-               return name;
-           }
-
-           public void setName(String name) {
-               this.name = name;
-           }
-       }
 
         public Data(List<GetUserAllCategoryDto> user, List<GetUserAllCategoryDto> hot, List<GetUserAllCategoryDto> others) {
             this.user = user;

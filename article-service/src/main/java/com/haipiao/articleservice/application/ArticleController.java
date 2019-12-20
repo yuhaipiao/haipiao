@@ -2,12 +2,9 @@ package com.haipiao.articleservice.application;
 
 import com.google.common.base.Preconditions;
 import com.haipiao.articleservice.constants.DeleteAndLikeConstants;
-import com.haipiao.articleservice.dto.req.LikeArticleRequest;
-import com.haipiao.articleservice.dto.req.RecommendationArticleRequest;
-import com.haipiao.articleservice.dto.resp.LikeArticleResponse;
-import com.haipiao.articleservice.dto.resp.RecommendationArticleResponse;
-import com.haipiao.articleservice.handler.DeleteAndLikeArticleHandler;
-import com.haipiao.articleservice.handler.RecommendationArticleHandler;
+import com.haipiao.articleservice.dto.req.*;
+import com.haipiao.articleservice.dto.resp.*;
+import com.haipiao.articleservice.handler.*;
 import com.haipiao.common.controller.HealthzController;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.haipiao.articleservice.handler.CreateArticleHandler;
-import com.haipiao.articleservice.handler.GetArticleHandler;
-import com.haipiao.articleservice.dto.req.GetArticleRequest;
-import com.haipiao.articleservice.dto.req.CreateArticleRequest;
-import com.haipiao.articleservice.dto.resp.CreateArticleResponse;
-import com.haipiao.articleservice.dto.resp.GetArticleResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,10 +34,16 @@ public class ArticleController extends HealthzController {
     @Autowired
     private RecommendationArticleHandler recommendationArticleHandler;
 
+    @Autowired
+    private DisLikeArticleHandler disLikeArticleHandler;
+
+    @Autowired
+    private GetArticleCommentsHandler getArticleCommentsHandler;
+
     /**
-     * API-16
-     * @param sessionToken
+     * API-23
      * @param articleID
+     * @param sessionToken
      * @return
      */
     @GetMapping("/article/{articleID}")
@@ -100,20 +97,14 @@ public class ArticleController extends HealthzController {
         return recommendationArticleHandler.handle(new RecommendationArticleRequest(context, category, article, user, latitude, longitude, limit, cursor));
     }
 
-    /**
-     * API-11
-     * 用户点赞
-     * @param id
-     * @param sessionToken
-     * @return
-     */
     @PostMapping("/article/{id}/like")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<LikeArticleResponse> likeArticle(@PathVariable(value = "id") int id,
                                                            @CookieValue("session-token") String sessionToken) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         StringUtils.isNotEmpty(String.valueOf(id));
-        return deleteAndLikeArticleHandler.handle(new LikeArticleRequest(id, DeleteAndLikeConstants.LIKE_ARTICLE));
+        LikeArticleRequest request = new LikeArticleRequest(id, DeleteAndLikeConstants.LIKE_ARTICLE);
+        return deleteAndLikeArticleHandler.handle(sessionToken, request);
     }
 
     /**
@@ -128,7 +119,8 @@ public class ArticleController extends HealthzController {
                                   @CookieValue("session-token") String sessionToken){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         StringUtils.isNotEmpty(String.valueOf(id));
-        return deleteAndLikeArticleHandler.handle(new LikeArticleRequest(id, DeleteAndLikeConstants.DELETE_LIKE_ARTICLE));
+        LikeArticleRequest request = new LikeArticleRequest(id, DeleteAndLikeConstants.DELETE_LIKE_ARTICLE);
+        return deleteAndLikeArticleHandler.handle(sessionToken, request);
     }
 
     /**
@@ -139,12 +131,26 @@ public class ArticleController extends HealthzController {
      */
     @PostMapping("/article/{id}/dislike")
     @Transactional(rollbackFor = Throwable.class)
-    public void disLikeArticle(@PathVariable(value = "id") int id,
+    public ResponseEntity<DisLikeArticleResponse> disLikeArticle(@PathVariable(value = "id") int id,
                                   @CookieValue("session-token") String sessionToken){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
-        StringUtils.isNotEmpty(String.valueOf(id));
-        // TODO 用户对此文章不感兴趣 后端做不对改用户推荐此文章处理 前段做本次点击后隐藏此文章操作
+        Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
+        return disLikeArticleHandler.handle(sessionToken, new DisLikeArticleRequest(id));
     }
 
-
+    /**
+     * API-24
+     * 加载评论列表
+     */
+    @GetMapping("/article/{id}/comment")
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
+    public ResponseEntity<GetArticleCommentsResponse> getArticleComments(@CookieValue("session-token") String sessionToken,
+                                                                         @PathVariable("id") int id,
+                                                                         @RequestParam("cursor") String cursor,
+                                                                         @RequestParam("limit") int limit){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
+        GetArticleCommentsRequest request = new GetArticleCommentsRequest(id, cursor, limit);
+        return getArticleCommentsHandler.handle(sessionToken, request);
+    }
 }

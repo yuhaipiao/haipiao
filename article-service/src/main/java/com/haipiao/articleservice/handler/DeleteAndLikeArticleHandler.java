@@ -53,7 +53,7 @@ public class DeleteAndLikeArticleHandler extends AbstractHandler<LikeArticleRequ
         int articleId = request.getId();
         Optional<Article> optional = articleRepository.findById(articleId);
         if (optional.isEmpty()){
-            String errorMessage = "当前文章已经不存在啦...";
+            String errorMessage = "当前文章不存在...";
             LOG.info(errorMessage);
             LikeArticleResponse response = new LikeArticleResponse(StatusCode.THIS_ARTICLE_IS_NOT_EXIST);
             response.setErrorMessage(errorMessage);
