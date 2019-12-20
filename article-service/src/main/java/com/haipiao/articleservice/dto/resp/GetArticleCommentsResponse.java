@@ -18,7 +18,7 @@ public class GetArticleCommentsResponse extends AbstractResponse<GetArticleComme
     public static class Data{
 
         @SerializedName("comments")
-        private List<Comment> comments;
+        private List<CommentResponse> comments;
 
         @SerializedName("total_count")
         private int totalCount;
@@ -29,7 +29,7 @@ public class GetArticleCommentsResponse extends AbstractResponse<GetArticleComme
         @SerializedName("more_to_follow")
         private boolean moreToFollow;
 
-        public static class Comment{
+        public static class CommentResponse{
 
             @SerializedName("id;")
             private int id;
@@ -52,10 +52,10 @@ public class GetArticleCommentsResponse extends AbstractResponse<GetArticleComme
             @SerializedName("replies")
             private List<Replie> replies;
 
-            public Comment() {
+            public CommentResponse() {
             }
 
-            public Comment(int id, String content, long commentedTime, int likes, Commenter commenter, int repliesCount, List<Replie> replies) {
+            public CommentResponse(int id, String content, long commentedTime, int likes, Commenter commenter, int repliesCount, List<Replie> replies) {
                 this.id = id;
                 this.content = content;
                 this.commentedTime = commentedTime;
@@ -236,18 +236,18 @@ public class GetArticleCommentsResponse extends AbstractResponse<GetArticleComme
         public Data() {
         }
 
-        public Data(List<Comment> comments, int totalCount, String cursor, boolean moreToFollow) {
+        public Data(List<CommentResponse> comments, int totalCount, String cursor, boolean moreToFollow) {
             this.comments = comments;
             this.totalCount = totalCount;
             this.cursor = cursor;
             this.moreToFollow = moreToFollow;
         }
 
-        public List<Comment> getComments() {
+        public List<CommentResponse> getComments() {
             return comments;
         }
 
-        public void setComments(List<Comment> comments) {
+        public void setComments(List<CommentResponse> comments) {
             this.comments = comments;
         }
 
