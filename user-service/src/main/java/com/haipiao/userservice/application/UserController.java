@@ -43,6 +43,9 @@ public class UserController extends HealthzController {
     private UpdateFollowingHandler updateFollowingHandler;
 
     @Autowired
+    private GetUserGroupHandler getUserGroupHandler;
+
+    @Autowired
     private GetUserFollowerHandler getUserFollowerHandler;
 
     @GetMapping("/user/{userID}/summary")
@@ -141,6 +144,23 @@ public class UserController extends HealthzController {
         Preconditions.checkArgument(StringUtils.isNotEmpty(type));
         return updateFollowingHandler.handle(sessionToken, new UpdateFollowingRequest(type));
     }
+
+    /**
+     * 获取当前用户所创建的所有“分组”
+     * @param sessionToken
+     * @param id
+     * @return
+     */
+    @GetMapping("/user/{id}/group")
+    @Transactional(rollbackFor = Throwable.class)
+    public ResponseEntity<GetGroupResponse> getUserGroup(@CookieValue("session-token") String sessionToken,
+                                                                @PathVariable(value="id") Integer id){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
+        return getUserGroupHandler.handle(sessionToken, new GetUserRequest(id));
+    }
+
+
 
     /**
      * API-22
