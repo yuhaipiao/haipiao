@@ -64,10 +64,10 @@ public class GetUserGroupHandler extends AbstractHandler<GetUserGroupRequest, Ge
     }
 
     private List<UserGroup> findByOwnerAndType(GetUserGroupRequest request){
-        return userGroupRepository.findUserGroupByOwnerIdAndType(request.getId(), UserGroupTypeEnum.CUSTOM.getValue());
+        return userGroupRepository.findUserGroupsByOwnerIdAndType(request.getId(), UserGroupTypeEnum.CUSTOM.getValue());
     }
 
     private List<UserGroup> findByType(GetUserGroupRequest request){
-        return userGroupRepository.findUserGroupByType(request.getType());
+        return userGroupRepository.findUserGroupsByType(request.getType());
     }
 }

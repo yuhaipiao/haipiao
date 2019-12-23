@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
  */
 public enum UserGroupTypeEnum {
 
-    DEFAULT("default"),
     CUSTOM("custom"),
+    DEFAULT("default"),
+    MISC("misc"),
+    HOT("hot"),
     ;
     private String value;
 

@@ -16,7 +16,7 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, Integer> 
      * @param type
      * @return
      */
-    List<UserGroup> findUserGroupByOwnerIdAndType(Integer ownerId, String type);
+    List<UserGroup> findUserGroupsByOwnerIdAndType(Integer ownerId, String type);
 
     /**
      * 根据类型查询
@@ -24,6 +24,6 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, Integer> 
      * @param type
      * @return
      */
-    List<UserGroup> findUserGroupByType(String type);
+    List<UserGroup> findUserGroupsByType(String type);
 
 }
