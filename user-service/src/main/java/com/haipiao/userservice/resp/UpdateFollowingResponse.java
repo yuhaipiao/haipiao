@@ -16,21 +16,21 @@ public class UpdateFollowingResponse extends AbstractResponse<UpdateFollowingRes
     public static class Data {
 
         @SerializedName("object")
-        private Object object;
-
-        public Object getObject() {
-            return object;
-        }
-
-        public void setObject(Object object) {
-            this.object = object;
-        }
+        private Object updated;
 
         public Data() {
         }
 
-        public Data(Object object) {
-            this.object = object;
+        public Data(Object updated) {
+            this.updated = updated;
+        }
+
+        public Object getUpdated() {
+            return updated;
+        }
+
+        public void setUpdated(Object updated) {
+            this.updated = updated;
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.haipiao.persist.repository;
 
 import com.haipiao.persist.entity.UserFollowingRelation;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 /**
  * @author wangjipeng
@@ -14,4 +17,14 @@ public interface UserFollowingRelationRepository extends CrudRepository<UserFoll
      * @return long
      */
     long findByUserId(int userId);
+
+    /**
+     * 获取所有关注此用户的用户Id
+     * @param userId
+     * @param beginNo
+     * @param pageSize
+     * @return
+     */
+    @Query(value = "select following_user_id from user_following_relation where user_id = ?1 order by id desc limit ?2, ?3", nativeQuery = true)
+    List<Integer> findUserFollowingIdsByUserId(int userId, int beginNo, int pageSize);
 }
