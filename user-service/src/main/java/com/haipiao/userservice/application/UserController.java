@@ -2,6 +2,7 @@ package com.haipiao.userservice.application;
 
 import com.google.common.base.Preconditions;
 import com.haipiao.common.resp.AbstractResponse;
+import com.haipiao.userservice.enums.UserGroupTypeEnum;
 import com.haipiao.userservice.handler.*;
 import com.haipiao.userservice.req.*;
 import com.haipiao.userservice.resp.*;
@@ -146,7 +147,8 @@ public class UserController extends HealthzController {
     }
 
     /**
-     * 获取当前用户所创建的所有“分组”
+     * API-15
+     * 获取当前用户所创建的所有“分组”,默认分组等
      * @param sessionToken
      * @param id
      * @return
@@ -154,12 +156,13 @@ public class UserController extends HealthzController {
     @GetMapping("/user/{id}/group")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<GetGroupResponse> getUserGroup(@CookieValue("session-token") String sessionToken,
-                                                                @PathVariable(value="id") Integer id){
+                                                         @PathVariable(value="id") Integer id,
+                                                         @RequestParam(value="type") String type){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
-        Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
-        return getUserGroupHandler.handle(sessionToken, new GetUserRequest(id));
+        Preconditions.checkArgument(null != id);
+        Preconditions.checkArgument(UserGroupTypeEnum.checkType(type));
+        return getUserGroupHandler.handle(sessionToken, new GetUserGroupRequest(id,type));
     }
-
 
 
     /**

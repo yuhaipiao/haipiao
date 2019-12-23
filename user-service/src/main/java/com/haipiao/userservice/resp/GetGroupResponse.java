@@ -18,22 +18,15 @@ public class GetGroupResponse extends AbstractResponse<GetGroupResponse.Data> {
 
     public static class Data {
 
-        @SerializedName("followers")
-        private List<GetGroupDto> followers;
-
-        public Data() {
-        }
-
-        public Data(List<GetGroupDto> followers) {
-            this.followers = followers;
-        }
+        @SerializedName("groups")
+        private List<GetGroupDto> groups;
 
         public List<GetGroupDto> getFollowers() {
-            return followers;
+            return groups;
         }
 
         public void setFollowers(List<GetGroupDto> followers) {
-            this.followers = followers;
+            this.groups = followers;
         }
     }
 }

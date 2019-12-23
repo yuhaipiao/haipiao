@@ -1,7 +1,6 @@
 package com.haipiao.persist.repository;
 
 import com.haipiao.persist.entity.Category;
-import com.haipiao.persist.entity.CommentReply;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
