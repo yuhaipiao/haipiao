@@ -154,7 +154,7 @@ public class UserController extends HealthzController {
      * @return
      */
     @GetMapping("/user/{id}/group")
-    @Transactional(rollbackFor = Throwable.class)
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<GetGroupResponse> getUserGroup(@CookieValue("session-token") String sessionToken,
                                                          @PathVariable(value="id") Integer id,
                                                          @RequestParam(value="type") String type){

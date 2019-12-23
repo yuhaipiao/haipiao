@@ -21,12 +21,16 @@ public class GetGroupResponse extends AbstractResponse<GetGroupResponse.Data> {
         @SerializedName("groups")
         private List<GetGroupDto> groups;
 
-        public List<GetGroupDto> getFollowers() {
+        public Data(List<GetGroupDto> groups) {
+            this.groups = groups;
+        }
+
+        public List<GetGroupDto> getGroups() {
             return groups;
         }
 
-        public void setFollowers(List<GetGroupDto> followers) {
-            this.groups = followers;
+        public void setGroups(List<GetGroupDto> groups) {
+            this.groups = groups;
         }
     }
 }

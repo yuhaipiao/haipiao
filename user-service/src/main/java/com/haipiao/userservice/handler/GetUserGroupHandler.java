@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -44,24 +45,29 @@ public class GetUserGroupHandler extends AbstractHandler<GetUserGroupRequest, Ge
     @Override
     public GetGroupResponse execute(GetUserGroupRequest request) throws AppException {
         GetGroupResponse groupResponse = new GetGroupResponse(StatusCode.SUCCESS);
-        LOG.info("GetGroupResponse->findUserGroup");
-        List<UserGroup> userGroupList = new ArrayList<>();
-        if(UserGroupTypeEnum.CUSTOM.getValue().equals(request.getType())){
-            userGroupList = userGroupRepository.findUserGroupByOwnerIdAndType(request.getId(), UserGroupTypeEnum.CUSTOM.getValue());
-        }else {
-            userGroupList = userGroupRepository.findUserGroupByType(request.getType());
-        }
 
-        if(!CollectionUtils.isEmpty(userGroupList)){
-            List<GetGroupDto> groups = userGroupList.stream()
-                    .map(userGroup -> new GetGroupDto(userGroup.getGroupId(),userGroup.getName()))
-                    .collect((Collectors.toList()));
+        List<UserGroup> userGroupList = UserGroupTypeEnum.CUSTOM.getValue().equals(request.getType()) ? findByOwnerAndType(request) : findByType(request);
 
-            if(!CollectionUtils.isEmpty(groups)){
-                GetGroupResponse.Data groupResponseData = new GetGroupResponse.Data();
-                groupResponse.setData(groupResponseData);
-            }
+        if(userGroupList.size() <= 0){
+            String errorMessage = String.format("%s: 该用户没有分组数据, 数据异常!", request.getId());
+            LOG.info(errorMessage);
+            groupResponse = new GetGroupResponse(StatusCode.NOT_FOUND);
+            groupResponse.setErrorMessage(errorMessage);
+            return groupResponse;
         }
+        List<GetGroupDto> groups = userGroupList.stream()
+                .filter(Objects::nonNull)
+                .map(userGroup -> new GetGroupDto(userGroup.getGroupId(),userGroup.getName()))
+                .collect((Collectors.toList()));
+        groupResponse.setData(new GetGroupResponse.Data(groups));
         return groupResponse;
+    }
+
+    private List<UserGroup> findByOwnerAndType(GetUserGroupRequest request){
+        return userGroupRepository.findUserGroupByOwnerIdAndType(request.getId(), UserGroupTypeEnum.CUSTOM.getValue());
+    }
+
+    private List<UserGroup> findByType(GetUserGroupRequest request){
+        return userGroupRepository.findUserGroupByType(request.getType());
     }
 }
