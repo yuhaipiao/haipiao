@@ -26,4 +26,12 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, Integer> 
      */
     List<UserGroup> findUserGroupsByType(String type);
 
+    /**
+     * 根据主键与ownerId查询校验
+     * @param groupId
+     * @param ownerId
+     * @return
+     */
+    int countByGroupIdAndOwnerId(Integer groupId,Integer ownerId);
+
 }

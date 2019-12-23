@@ -49,6 +49,9 @@ public class UserController extends HealthzController {
     @Autowired
     private GetUserFollowerHandler getUserFollowerHandler;
 
+    @Autowired
+    private DeleteGroupHandler deleteGroupHandler;
+
     @GetMapping("/user/{userID}/summary")
     public ResponseEntity<GetUserResponse> getUserById(@PathVariable(value="userID") String userID) {
         logger.info("userID={}", userID);
@@ -162,6 +165,23 @@ public class UserController extends HealthzController {
         Preconditions.checkArgument(null != id);
         Preconditions.checkArgument(UserGroupTypeEnum.checkType(type));
         return getUserGroupHandler.handle(sessionToken, new GetUserGroupRequest(id,type));
+    }
+
+
+    /**
+     * API-17
+     * 删除分组
+     * @param sessionToken
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/group/{id}")
+    @Transactional(rollbackFor = Throwable.class)
+    public ResponseEntity<OperateResponse> deleteGroup(@CookieValue("session-token") String sessionToken,
+                                                             @PathVariable(value="id") Integer id){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != id);
+        return deleteGroupHandler.handle(sessionToken, new DeleteGroupRequest(id));
     }
 
 

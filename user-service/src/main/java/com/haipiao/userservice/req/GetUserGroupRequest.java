@@ -18,6 +18,10 @@ public class GetUserGroupRequest extends AbstractRequest {
         this.type = type;
     }
 
+    public GetUserGroupRequest(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }
