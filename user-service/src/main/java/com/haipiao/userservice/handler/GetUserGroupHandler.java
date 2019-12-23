@@ -44,7 +44,7 @@ public class GetUserGroupHandler extends AbstractHandler<GetUserGroupRequest, Ge
     @Override
     public GetGroupResponse execute(GetUserGroupRequest request) throws AppException {
         GetGroupResponse groupResponse = new GetGroupResponse(StatusCode.SUCCESS);
-
+        LOG.info("GetGroupResponse->findUserGroup");
         List<UserGroup> userGroupList = new ArrayList<>();
         if(UserGroupTypeEnum.CUSTOM.getValue().equals(request.getType())){
             userGroupList = userGroupRepository.findUserGroupByOwnerIdAndType(request.getId(), UserGroupTypeEnum.CUSTOM.getValue());
