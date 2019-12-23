@@ -52,6 +52,19 @@
 
 - `SOME_ERROR`: 必要的文字描述。
 
+## 数据类型与结构
+
+#### 1. 游标（cursor）
+
+cursor指向ResultSet里面的一个位置。假设其是一个int值，如果ResultSet有10行，且limit=3。前端会分4次取
+- 第一次：cursor=null，limit=3，服务器 返回0， 1， 2行， cursor=2
+- 第二次：cursor=2，limit=3，服务器 返回3， 4， 5行， cursor=5
+- 第三次：cursor=5，limit=3，服务器 返回6， 7，8行， cursor=8
+- 第四次：cursor=8，limit=3，服务器 返回9行， cursor=9， more_to_follow=false
+
+实际上cursor是一个对客户端不透明的字符串。即，API的调用者不需要了解（也不能假设）cursor的含义。客户端只需要在每次发起请求时带上一次API所返回的cursor。直至more_to_follow为false。 
+
+必要时服务端可以在其中嵌入任意的信息。比如，服务器可以在其中加入分页开始时的时间。之后在处理每次分页请求的都加入  ``update_ts <= <pagination started timestamp> ``过滤器（filter）。借此避免在分页过程中出现的重读和漏读问题(假设不会hard delete数据)。
 
 ## 登陆模块 API
 
@@ -388,7 +401,7 @@ category列表和对应图片建议缓存。
 | article | int | true when context=article | article的ID |
 | user | int | true when context=user_profile | user的ID |
 | limit | int | false | 推荐的个数，默认6个 |
-| cursor | int | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Required headers**:
 
@@ -420,7 +433,7 @@ category列表和对应图片建议缓存。
         description : "聊聊斯坦福那些事"
       }
     ],
-    cursor: 1,
+    cursor: "somestring",
     more_to_follow: false
   }
 }
@@ -505,7 +518,7 @@ topic_related_latest对应蓝湖图54（点击最新）；
 | latitude | float | true when context=nearby  | 纬度，需与longitude同在 |
 | longitude | float | true when context=nearby  | 经度，需与latitude同在 |
 | limit | int | false | 推荐的个数，默认6个 |
-| cursor | string | false | 当前一次响应中`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Required headers**: `Cookie: session-token=<token>`
 
@@ -1028,7 +1041,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
       {...}
     ]
     "total_count": 10,
-    "cursor": "6",
+    "cursor": "somestring",
     "more_to_follow": true
   }
 }
@@ -1062,7 +1075,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Response body** :
 
@@ -1088,7 +1101,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
       {...}
     ]
     "total_count": 10,
-    "cursor": "6",
+    "cursor": "somestring",
     "more_to_follow": true
   }
 }
@@ -1122,7 +1135,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Response body** :
 
@@ -1143,7 +1156,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
       {...}
     ]
     "total_count": 10,
-    "cursor": "6",
+    "cursor": "somestring",
     "more_to_follow": true
   }
 }
@@ -1177,7 +1190,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Response body** :
 
@@ -1198,7 +1211,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
       {...}
     ]
     "total_count": 10,
-    "cursor": "6",
+    "cursor": "somestring",
     "more_to_follow": true
   }
 }
@@ -1317,7 +1330,7 @@ tag中的x和y都是int，x表示的浮点数是0.001*x。
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。 |
 
 **Required headers**: `Cookie: session-token=<token>`
 
@@ -1436,7 +1449,7 @@ TODO: decide how to handle user itself
 | Name | Type        | Required | Description                         |
 | ---- | ----------- | -------- | ----------------------------------- |
 | limit | Integer  | No      | 请求的列表长度(默认为6) |
-| cursor | string | false | 当前一次响应`more_to_follow`为`true`时，如果想要继续请求列表中的后续内容，需要带上前一次返回的cursor。 |
+| cursor | string | false | `cursor`为当前分页位置，`limit`为每页大小，`more_to_follow`为是否有后续内容。。 |
 
 **Response body** :
 
