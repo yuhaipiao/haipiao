@@ -1,6 +1,8 @@
 package com.haipiao.articleservice.handler.factory;
 
+import com.haipiao.articleservice.constants.RecommendationArticleTimeConstant;
 import com.haipiao.articleservice.dto.req.RecommendationArticleRequest;
+import com.haipiao.articleservice.enums.RecommendationArticleEnum;
 import com.haipiao.persist.entity.Article;
 import com.haipiao.persist.repository.ArticleRepository;
 import com.haipiao.persist.utils.DateTimeUtil;
@@ -32,7 +34,7 @@ public class RecommendationByDiscover extends AbstractRecommendationArticle{
      */
     @Override
     public List<Article> getArticlesByContext(RecommendationArticleRequest request) {
-        LOGGER.info("当前场景为{}", request.getContext());
-        return articleRepository.findByCreateTsBetween(DateTimeUtil.twelveHoursAgo(), DateTimeUtil.dateToString(new Date()), PageUtil.cursor(request.getCursor()), PageUtil.limit(request.getLimit()));
+        LOGGER.info("当前场景为{}", RecommendationArticleEnum.getNameByValue(request.getContext()));
+        return articleRepository.findByCreateTsBetween(DateTimeUtil.someHoursAgo(RecommendationArticleTimeConstant.TWELVE_HOURS), DateTimeUtil.dateToString(new Date()), PageUtil.cursor(request.getCursor()), PageUtil.limit(request.getLimit()));
     }
 }

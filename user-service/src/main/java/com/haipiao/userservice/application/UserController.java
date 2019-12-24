@@ -106,7 +106,7 @@ public class UserController extends HealthzController {
                                                                  @RequestParam("article") int article,
                                                                  @RequestParam("user") int user,
                                                                  @RequestParam("limit") int limit,
-                                                                 @RequestParam("cursor") int cursor){
+                                                                 @RequestParam("cursor") String cursor){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
         RecommendationRequest request = new RecommendationRequest(context, article, user, limit, cursor);

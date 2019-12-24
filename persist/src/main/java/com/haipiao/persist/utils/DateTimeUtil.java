@@ -15,9 +15,9 @@ public class DateTimeUtil {
      * 获取当前时间的前12小时
      * @return
      */
-    public static String twelveHoursAgo(){
+    public static String someHoursAgo(int hours){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 12);
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - hours);
         return dateToString(new Date(calendar.getTime().getTime()));
     }
 

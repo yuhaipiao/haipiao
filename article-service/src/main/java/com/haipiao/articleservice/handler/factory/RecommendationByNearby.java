@@ -1,6 +1,7 @@
 package com.haipiao.articleservice.handler.factory;
 
 import com.haipiao.articleservice.dto.req.RecommendationArticleRequest;
+import com.haipiao.articleservice.enums.RecommendationArticleEnum;
 import com.haipiao.persist.entity.Article;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +25,10 @@ public class RecommendationByNearby extends AbstractRecommendationArticle{
      */
     @Override
     public List<Article> getArticlesByContext(RecommendationArticleRequest request) {
-        // 纬度
-        float latitude = request.getLatitude();
-        // 经度
+        LOGGER.info("当前场景为{}", RecommendationArticleEnum.getNameByValue(request.getContext()));
+        // TODO location待增加
         float longitude = request.getLongitude();
+        float latitude = request.getLatitude();
 
         return null;
     }

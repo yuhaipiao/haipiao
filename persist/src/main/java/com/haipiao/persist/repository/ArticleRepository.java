@@ -19,7 +19,7 @@ public interface ArticleRepository extends CrudRepository<Article, Integer> {
     List<Article> findArticlesOrderByLikes(int cursor, int limit);
 
     /**
-     * 获取当前时间和前12小时之间点赞数最多的前6篇文章
+     * 获取当前时间和前某小时之间点赞数最多的前6篇文章
      * @param beginTime
      * @param lastTime
      * @param cursor

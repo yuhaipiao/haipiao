@@ -2,6 +2,7 @@ package com.haipiao.articleservice.enums;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -39,5 +40,14 @@ public enum RecommendationArticleEnum {
         RecommendationArticleEnum[] values = RecommendationArticleEnum.values();
         List<String> valueList = Arrays.stream(values).map(v -> v.value).collect(Collectors.toList());
         return valueList.contains(context);
+    }
+
+    public static String getNameByValue(String value){
+        RecommendationArticleEnum[] values = RecommendationArticleEnum.values();
+        RecommendationArticleEnum articleEnum = Arrays.stream(values)
+                .filter(v -> v.value.equalsIgnoreCase(value))
+                .findFirst()
+                .orElse(null);
+        return articleEnum == null ? null : articleEnum.name;
     }
 }
