@@ -10,6 +10,7 @@ import com.haipiao.persist.entity.User;
 import com.haipiao.persist.entity.UserFollowingRelation;
 import com.haipiao.persist.repository.*;
 import com.haipiao.userservice.enums.RecommendationContextEnum;
+import com.haipiao.userservice.handler.constants.LimitNumConstant;
 import com.haipiao.userservice.handler.interfaces.ChooseRecommended;
 import com.haipiao.userservice.req.RecommendationRequest;
 import com.haipiao.userservice.resp.RecommendationResponse;
@@ -83,7 +84,7 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
 
         // TODO 根据文档更新修改
         int cursor = request.getCursor();
-        int limit = request.getLimit() == 0 ? 6 : request.getLimit();
+        int limit = request.getLimit() == 0 ? LimitNumConstant.RECOMMENDATION_LIMIT : request.getLimit();
         boolean moreToFollow = false;
         if (responseList.size() > limit * cursor){
             moreToFollow = true;

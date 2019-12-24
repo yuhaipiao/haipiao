@@ -17,6 +17,13 @@ public class UpdateFollowingHandler extends AbstractHandler<UpdateFollowingReque
         super(UpdateFollowingResponse.class, sessionService);
     }
 
+    /**
+     * 获取被当前用户关注用户是否更新或更新内容
+     *
+     * @param request
+     * @return
+     * @throws AppException
+     */
     @Override
     public UpdateFollowingResponse execute(UpdateFollowingRequest request) throws AppException {
 

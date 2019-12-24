@@ -772,7 +772,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 {
   "status_code": "SUCCESS",
   "data": {
-    "articles": [
+    "updated": [
       {
         "id": 123,
         "title": "学习和工作",
