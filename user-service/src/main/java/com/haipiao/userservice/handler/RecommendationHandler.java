@@ -1,17 +1,13 @@
 package com.haipiao.userservice.handler;
 
-import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
-import com.haipiao.common.req.AbstractRequest;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
-import com.haipiao.persist.entity.UserFollowingRelation;
 import com.haipiao.persist.repository.*;
-import com.haipiao.userservice.enums.RecommendationContextEnum;
 import com.haipiao.userservice.handler.constants.LimitNumConstant;
-import com.haipiao.userservice.handler.interfaces.ChooseRecommended;
+import com.haipiao.userservice.handler.factory.ChooseRecommended;
 import com.haipiao.userservice.req.RecommendationRequest;
 import com.haipiao.userservice.resp.RecommendationResponse;
 import com.haipiao.userservice.resp.dto.RecommendationInfoDto;
@@ -25,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * @author wangjipeng
@@ -82,9 +77,8 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
                 .map(u -> new RecommendationInfoDto(u.getUserId(), u.getRealName(), u.getProfileImgUrl(), findUserFollowee(u.getUserId()), u.getSignature()))
                 .collect(Collectors.toList());
 
-        // TODO 根据文档更新修改
-        int cursor = request.getCursor();
-        int limit = request.getLimit() == 0 ? LimitNumConstant.RECOMMENDATION_LIMIT : request.getLimit();
+        int cursor = Integer.parseInt(request.getCursor());
+        int limit = request.getLimit() == 0 ? LimitNumConstant.DEFAULT_LIMIT : request.getLimit();
         boolean moreToFollow = false;
         if (responseList.size() > limit * cursor){
             moreToFollow = true;

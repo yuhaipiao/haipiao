@@ -11,12 +11,12 @@ public interface CommentRepository extends CrudRepository<Comment, Integer> {
     /**
      * 通过文章id分页查询该文章评论
      * @param id
-     * @param limit
-     * @param cursor
+     * @param beingNo
+     * @param pageSize
      * @return
      */
-    @Query("")
-    List<Comment> findByArticleIdAndLimit(int id, int limit, String cursor);
+    @Query(value = "select * from comment where article_id = ?1 order by comment_id limit ?2, ?3", nativeQuery = true)
+    List<Comment> findByArticleIdAndLimit(int id, int beingNo, int pageSize);
 
     /**
      * 根据文章id获取问上评论总数量

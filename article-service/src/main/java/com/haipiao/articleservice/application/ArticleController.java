@@ -91,7 +91,7 @@ public class ArticleController extends HealthzController {
                                                                                @RequestParam("latitude") float latitude,
                                                                                @RequestParam("longitude") float longitude,
                                                                                @RequestParam("limit") int limit,
-                                                                               @RequestParam("cursor") int cursor){
+                                                                               @RequestParam("cursor") String cursor){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
         return recommendationArticleHandler.handle(new RecommendationArticleRequest(context, category, article, user, latitude, longitude, limit, cursor));

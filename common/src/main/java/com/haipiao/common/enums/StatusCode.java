@@ -17,7 +17,8 @@ public enum StatusCode {
      * Article Codes
      * @param defaultMessage
      */
-    THIS_ARTICLE_IS_NOT_EXIST("the current article no longer exists");
+    THIS_ARTICLE_IS_NOT_EXIST("the current article no longer exists"),
+    THIS_RECOMMENDED_ARTICLE_VALUE_IS_NOT_EXIST("this recommended article value is not exist");
 
     StatusCode(String defaultMessage) {
         this.defaultMessage = defaultMessage;

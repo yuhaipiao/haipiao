@@ -6,7 +6,6 @@ import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
-import com.haipiao.persist.constants.CommentLimitConstant;
 import com.haipiao.persist.entity.Article;
 import com.haipiao.persist.entity.Comment;
 import com.haipiao.persist.entity.CommentReply;
@@ -15,6 +14,7 @@ import com.haipiao.persist.repository.ArticleRepository;
 import com.haipiao.persist.repository.CommentReplyRepository;
 import com.haipiao.persist.repository.CommentRepository;
 import com.haipiao.persist.repository.UserRepository;
+import com.haipiao.persist.utils.PageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +67,7 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
             return response;
         }
 
-        // TODO 分页查询wangshun  cursor上次返回位置 具体概念...
-        int limit = request.getLimit() == 0 ? CommentLimitConstant.LIMIT : request.getLimit();
-        List<Comment> commentList = commentRepository.findByArticleIdAndLimit(request.getId(), limit, request.getCursor());
+        List<Comment> commentList = commentRepository.findByArticleIdAndLimit(request.getId(), PageUtil.cursor(request.getCursor()), PageUtil.limit(request.getLimit()));
         List<GetArticleCommentsResponse.Data.CommentResponse> comments = commentList.stream().map(this::assemblerComment).collect(Collectors.toList());
         long totalCount = commentRepository.findAllByArticleId(request.getId());
         boolean moreToFollow = comments.size() >= totalCount;
@@ -121,6 +119,9 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
      */
     private GetArticleCommentsResponse.Data.CommentResponse.Replie.Replier assemblerReplier(int replierId){
         Optional<User> userOptional = userRepository.findById(replierId);
+        if (userOptional.isEmpty()){
+            return null;
+        }
         User user = userOptional.get();
         return new GetArticleCommentsResponse.Data.CommentResponse.Replie.Replier(user.getUserId(), user.getUserName());
     }

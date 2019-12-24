@@ -48,7 +48,7 @@ public class GetUserGroupHandler extends AbstractHandler<GetUserGroupRequest, Ge
 
         List<UserGroup> userGroupList = UserGroupTypeEnum.CUSTOM.getValue().equals(request.getType()) ? findByOwnerAndType(request) : findByType(request);
 
-        if(userGroupList.size() <= 0){
+        if(userGroupList == null || userGroupList.size() <= 0){
             String errorMessage = String.format("%s: 该用户没有分组数据, 数据异常!", request.getId());
             LOG.info(errorMessage);
             groupResponse = new GetGroupResponse(StatusCode.NOT_FOUND);

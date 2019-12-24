@@ -39,12 +39,12 @@ public class RecommendationArticleResponse extends AbstractResponse<Recommendati
             private int likes;
 
             @SerializedName("liked")
-            private String liked;
+            private boolean liked;
 
             @SerializedName("author")
             private Author author;
 
-            public ArticleData(String coverImageUrl, int id, String tittle, int likes, String liked, Author author) {
+            public ArticleData(String coverImageUrl, int id, String tittle, int likes, boolean liked, Author author) {
                 this.coverImageUrl = coverImageUrl;
                 this.id = id;
                 this.tittle = tittle;
@@ -126,11 +126,11 @@ public class RecommendationArticleResponse extends AbstractResponse<Recommendati
                 this.likes = likes;
             }
 
-            public String getLiked() {
+            public boolean getLiked() {
                 return liked;
             }
 
-            public void setLiked(String liked) {
+            public void setLiked(boolean liked) {
                 this.liked = liked;
             }
 

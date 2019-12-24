@@ -7,7 +7,7 @@ import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.repository.UserFollowingRelationRepository;
 import com.haipiao.persist.repository.UserRepository;
-import com.haipiao.userservice.handler.constants.LimitNumConstant;
+import com.haipiao.persist.utils.PageUtil;
 import com.haipiao.userservice.req.GetUserFollowerRequest;
 import com.haipiao.userservice.resp.GetUserFollowerResponse;
 import org.slf4j.Logger;
@@ -43,10 +43,10 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
     public GetUserFollowerResponse execute(GetUserFollowerRequest request) throws AppException {
         GetUserFollowerResponse response = new GetUserFollowerResponse(StatusCode.SUCCESS);
 
-        int limit = request.getLimit() == 0 ? LimitNumConstant.GET_USER_FOLLOWER_LIMIT : request.getLimit();
-        int cursor = request.getCursor() == null ? 0 : Integer.parseInt(request.getCursor());
-        List<Integer> followingIds = userFollowingRelationRepository.findUserFollowingIdsByUserId(request.getId(), limit, cursor);
-        if (followingIds.size() <= 0){
+        int cursor = PageUtil.cursor(request.getCursor());
+        int limit = PageUtil.limit(request.getLimit());
+        List<Integer> followingIds = userFollowingRelationRepository.findUserFollowingIdsByUserId(request.getId(), cursor, limit);
+        if (followingIds == null || followingIds.size() <= 0){
             String errorMessage = String.format("%s: 当前用户无粉丝", request.getId());
             LOGGER.info(errorMessage);
             response = new GetUserFollowerResponse(StatusCode.NOT_FOUND);

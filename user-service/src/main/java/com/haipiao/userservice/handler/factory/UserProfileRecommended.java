@@ -1,4 +1,4 @@
-package com.haipiao.userservice.handler.interfaces;
+package com.haipiao.userservice.handler.factory;
 
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.repository.UserRepository;
