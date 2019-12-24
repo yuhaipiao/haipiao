@@ -52,6 +52,9 @@ public class UserController extends HealthzController {
     @Autowired
     private DeleteGroupHandler deleteGroupHandler;
 
+    @Autowired
+    private CreateGroupHandler createGroupHandler;
+
     @GetMapping("/user/{userID}/summary")
     public ResponseEntity<GetUserResponse> getUserById(@PathVariable(value="userID") String userID) {
         logger.info("userID={}", userID);
@@ -182,6 +185,25 @@ public class UserController extends HealthzController {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         return deleteGroupHandler.handle(sessionToken, new DeleteGroupRequest(id));
+    }
+
+    /**
+     * API-18
+     * 新建分组
+     * @param sessionToken
+     * @param userId
+     * @param groupName
+     * @return
+     */
+    @PostMapping("/group")
+    @Transactional(rollbackFor = Throwable.class)
+    public ResponseEntity<OperateResponse> CreateGroup(@CookieValue("session-token") String sessionToken,
+                                                       @RequestParam(value="user_id") Integer userId,
+                                                       @RequestParam(value="group_name") String groupName){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != userId);
+        Preconditions.checkArgument(StringUtils.isNotEmpty(groupName));
+        return createGroupHandler.handle(sessionToken, new CreateGroupRequest(userId,groupName));
     }
 
 
