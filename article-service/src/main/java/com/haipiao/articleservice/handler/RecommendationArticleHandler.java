@@ -4,6 +4,8 @@ import com.haipiao.articleservice.dto.req.RecommendationArticleRequest;
 import com.haipiao.articleservice.dto.resp.RecommendationArticleResponse;
 import com.haipiao.articleservice.enums.RecommendationArticleEnum;
 import com.haipiao.articleservice.handler.factory.CommonRecommendationArticle;
+import com.haipiao.articleservice.handler.factory.RecommendationArticle;
+import com.haipiao.articleservice.handler.factory.RecommendationByTopicRelatedLatest;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
@@ -45,9 +47,10 @@ public class RecommendationArticleHandler extends AbstractHandler<Recommendation
             response.setErrorMessage(StatusCode.THIS_RECOMMENDED_ARTICLE_VALUE_IS_NOT_EXIST.getDefaultMessage());
             return response;
         }
-        List<RecommendationArticleResponse.Data.ArticleData> articleDataList = commonRecommendationArticle.assemblerDataByContext(request);
-        RecommendationArticleResponse.Data data = new RecommendationArticleResponse.Data(articleDataList);
+        RecommendationArticleResponse.Data data = new RecommendationArticleResponse.Data(commonRecommendationArticle.getArticleDataList(request));
         response.setData(data);
         return response;
     }
+
+
 }

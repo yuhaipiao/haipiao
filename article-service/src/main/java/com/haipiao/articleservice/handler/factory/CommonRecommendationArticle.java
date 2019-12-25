@@ -1,5 +1,6 @@
 package com.haipiao.articleservice.handler.factory;
 
+import com.haipiao.articleservice.constants.RecommendationArticleConstant;
 import com.haipiao.articleservice.constants.RecommendationArticleTimeConstant;
 import com.haipiao.articleservice.dto.req.RecommendationArticleRequest;
 import com.haipiao.articleservice.dto.resp.RecommendationArticleResponse;
@@ -43,14 +44,22 @@ public class CommonRecommendationArticle {
     @Autowired
     private RecommendationByTopicRelatedLatest recommendationByTopicRelatedLatest;
 
-    public List<RecommendationArticleResponse.Data.ArticleData> assemblerDataByContext(RecommendationArticleRequest request){
-        Map<String, List<RecommendationArticleResponse.Data.ArticleData>> map = new HashMap<>(8);
-        map.put(RecommendationArticleEnum.DISCOVER.getValue(), recommendationByDiscover.assemblerDate(request));
-        map.put(RecommendationArticleEnum.NEARBY.getValue(), recommendationByNearby.assemblerDate(request));
-        map.put(RecommendationArticleEnum.ARTICLE_RELATED.getValue(), recommendationByArticleRelated.assemblerDate(request));
-        map.put(RecommendationArticleEnum.TOPIC_RELATED.getValue(), recommendationByTopicRelated.assemblerDate(request));
-        map.put(RecommendationArticleEnum.TOPIC_RELATED_LATEST.getValue(), recommendationByTopicRelatedLatest.assemblerDate(request));
-        return map.get(request.getContext());
+    public List<RecommendationArticleResponse.Data.ArticleData> getArticleDataList(RecommendationArticleRequest request){
+        String context = request.getContext();
+        switch (context){
+            case RecommendationArticleConstant.DISCOVER:
+                return recommendationByDiscover.assemblerDate(request);
+            case RecommendationArticleConstant.NEARBY:
+                return recommendationByNearby.assemblerDate(request);
+            case RecommendationArticleConstant.ARTICLE_RELATED:
+                return recommendationByArticleRelated.assemblerDate(request);
+            case RecommendationArticleConstant.TOPIC_RELATED:
+                return recommendationByTopicRelated.assemblerDate(request);
+            case RecommendationArticleConstant.TOPIC_RELATED_LATEST:
+                return recommendationByTopicRelatedLatest.assemblerDate(request);
+            default:
+                return null;
+        }
     }
 
     public List<Article> getArticlesOfTopicCommonMethod(int days, int cursor, int limit){
