@@ -48,7 +48,7 @@ public class FolloweeUserHandler extends AbstractHandler<FolloweeUserRequest, Fo
     protected FolloweeUserResponse execute(FolloweeUserRequest request) {
         int followingUserId = request.getLoggedInUserId();
         Optional<User> user = userRepository.findById(request.getFolloweeId());
-        if (user.isEmpty()){
+        if (!user.isPresent()){
             String errorMessage = String.format("当前关注用户不存在, Id:%s", request.getFolloweeId());
             LOG.info(errorMessage);
             FolloweeUserResponse response = new FolloweeUserResponse(StatusCode.BAD_REQUEST);
