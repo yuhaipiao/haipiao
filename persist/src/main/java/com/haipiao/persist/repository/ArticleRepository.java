@@ -1,10 +1,11 @@
 package com.haipiao.persist.repository;
 
 import com.haipiao.persist.entity.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Date;
 import java.util.List;
 
 public interface ArticleRepository extends CrudRepository<Article, Integer> {
@@ -28,4 +29,11 @@ public interface ArticleRepository extends CrudRepository<Article, Integer> {
      */
     @Query(value = "select * from article where create_ts between ?1 and ?2 order by likes desc limit ?3, ?4", nativeQuery = true)
     List<Article> findByCreateTsBetween(String beginTime, String lastTime, int cursor, int limit);
+
+
+
+    @Query(value = "select * from article where user_id = ?1 and if(?2 != null ,status in (?2),1=1) order by create_ts desc", nativeQuery = true)
+    Page<Article> findArticlesByAuthorIdandAndStatus(Integer authorId, String status, Pageable pageable);
+
+
 }

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Comment")
+@Table(name = "comment")
 public class Comment extends BaseEntity {
 
     @Id

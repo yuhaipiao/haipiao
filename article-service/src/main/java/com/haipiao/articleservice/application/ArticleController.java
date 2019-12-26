@@ -40,6 +40,9 @@ public class ArticleController extends HealthzController {
     @Autowired
     private GetArticleCommentsHandler getArticleCommentsHandler;
 
+    @Autowired
+    private GetUserArticleHandler getUserArticleHandler;
+
     /**
      * API-23
      * @param articleID
@@ -105,6 +108,27 @@ public class ArticleController extends HealthzController {
         StringUtils.isNotEmpty(String.valueOf(id));
         LikeArticleRequest request = new LikeArticleRequest(id, DeleteAndLikeConstants.LIKE_ARTICLE);
         return deleteAndLikeArticleHandler.handle(sessionToken, request);
+    }
+
+
+    /**
+     * API-9
+     * 获取用户笔记
+     * @param sessionToken
+     * @param id
+     * @param limit
+     * @param cursor
+     * @return
+     */
+    @GetMapping("/user/{id}/article")
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
+    public ResponseEntity<ArticleResponse> getUserArticle(@CookieValue("session-token") String sessionToken,
+                                                                               @PathVariable(value = "id") Integer id,
+                                                                               @RequestParam(value = "limit",defaultValue = "6") Integer limit,
+                                                                               @RequestParam(value = "cursor",defaultValue = "0") String cursor){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != id);
+        return getUserArticleHandler.handle(new GetArticleCommentsRequest(id, cursor,limit));
     }
 
     /**
