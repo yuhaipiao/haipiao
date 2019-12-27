@@ -33,7 +33,14 @@ public interface ArticleRepository extends CrudRepository<Article, Integer> {
 
 
     @Query(value = "select * from article where user_id = ?1 and if(?2 != null ,status in (?2),1=1) order by create_ts desc", nativeQuery = true)
-    Page<Article> findArticlesByAuthorIdandAndStatus(Integer authorId, String status, Pageable pageable);
+    Page<Article> findArticlesByAuthorIdAndStatus(Integer authorId, String status, Pageable pageable);
+
+    @Query(value = "select a.* " +
+            "from article a " +
+            "right join article_collect_relation ac on a.article_id = ac.article_id " +
+            "where ac.collector_id = ?1 and if(?2 != null,a.status in (?2),1=1) " +
+            "order by ac.create_ts desc",nativeQuery = true)
+    Page<Article> findArticlesByCollectorIdAndStatus(Integer collectorId, String status, Pageable pageable);
 
 
 }

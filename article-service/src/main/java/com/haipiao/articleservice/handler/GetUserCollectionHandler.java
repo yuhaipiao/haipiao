@@ -2,7 +2,6 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleCommentsRequest;
 import com.haipiao.articleservice.dto.resp.ArticleResponse;
-import com.haipiao.articleservice.dto.resp.RecommendationArticleResponse;
 import com.haipiao.articleservice.dto.resp.vo.ArticleData;
 import com.haipiao.articleservice.dto.resp.vo.Author;
 import com.haipiao.common.enums.StatusCode;
@@ -33,9 +32,9 @@ import java.util.stream.Collectors;
  * @author wangshun
  */
 @Component
-public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsRequest, ArticleResponse> {
+public class GetUserCollectionHandler extends AbstractHandler<GetArticleCommentsRequest, ArticleResponse> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(GetUserArticleHandler.class);
+    public static final Logger LOG = LoggerFactory.getLogger(GetUserCollectionHandler.class);
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -47,10 +46,10 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
     private ArticleLikeRelationRepository articleLikeRelationRepository;
 
 
-    protected GetUserArticleHandler(SessionService sessionService,
-                                    ArticleRepository articleRepository,
-                                    UserRepository userRepository,
-                                    ArticleLikeRelationRepository articleLikeRelationRepository) {
+    protected GetUserCollectionHandler(SessionService sessionService,
+                                       ArticleRepository articleRepository,
+                                       UserRepository userRepository,
+                                       ArticleLikeRelationRepository articleLikeRelationRepository) {
         super(ArticleResponse.class, sessionService);
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
@@ -61,17 +60,17 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
     public ArticleResponse execute(GetArticleCommentsRequest request) throws AppException {
         Integer userId = request.getId();
         Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()),request.getLimit());
-        Page<Article> articlesPage = articleRepository.findArticlesByAuthorIdAndStatus(userId,"",pageable);
+        Page<Article> articlesPage = articleRepository.findArticlesByCollectorIdAndStatus(userId,"",pageable);
         List<Article> articles = articlesPage.getContent();
         if(CollectionUtils.isEmpty(articles)){
             ArticleResponse resp = new ArticleResponse(StatusCode.NOT_FOUND);
-            resp.setErrorMessage(String.format("user %s not have article", userId));
+            resp.setErrorMessage(String.format("user %s not have collection article", userId));
             return resp;
         }
 
         List<ArticleData> articlesList = articles.stream()
                 .filter(Objects::nonNull)
-                .map(a -> new ArticleData("", a.getArticleId(), a.getTitle(), a.getLikes(), checkIsLike(a.getArticleId(), userId), assemblerAuthor(a.getAuthorId())))
+                .map(a -> new ArticleData("", a.getArticleId(), a.getTitle(), a.getLikes(), checkIsLike(a.getArticleId(), userId), assemblerAuthor(userId)))
                 .collect(Collectors.toList());
 
         ArticleResponse resp = new ArticleResponse(StatusCode.SUCCESS);

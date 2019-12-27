@@ -43,6 +43,9 @@ public class ArticleController extends HealthzController {
     @Autowired
     private GetUserArticleHandler getUserArticleHandler;
 
+    @Autowired
+    private GetUserCollectionHandler getUserCollectionHandler;
+
     /**
      * API-23
      * @param articleID
@@ -112,7 +115,7 @@ public class ArticleController extends HealthzController {
 
 
     /**
-     * API-9
+     * API-19
      * 获取用户笔记
      * @param sessionToken
      * @param id
@@ -123,12 +126,32 @@ public class ArticleController extends HealthzController {
     @GetMapping("/user/{id}/article")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<ArticleResponse> getUserArticle(@CookieValue("session-token") String sessionToken,
-                                                                               @PathVariable(value = "id") Integer id,
-                                                                               @RequestParam(value = "limit",defaultValue = "6") Integer limit,
-                                                                               @RequestParam(value = "cursor",defaultValue = "0") String cursor){
+                                                          @PathVariable(value = "id") Integer id,
+                                                          @RequestParam(value = "limit",defaultValue = "6") Integer limit,
+                                                          @RequestParam(value = "cursor",defaultValue = "0") String cursor){
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
-        return getUserArticleHandler.handle(new GetArticleCommentsRequest(id, cursor,limit));
+        return getUserArticleHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
+    }
+
+    /**
+     * API-20
+     * 获取用户收藏笔记
+     * @param sessionToken
+     * @param id
+     * @param limit
+     * @param cursor
+     * @return
+     */
+    @GetMapping("/user/{id}/collection")
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
+    public ResponseEntity<ArticleResponse> getUserCollection(@CookieValue("session-token") String sessionToken,
+                                                             @PathVariable(value = "id") Integer id,
+                                                             @RequestParam(value = "limit",defaultValue = "6") Integer limit,
+                                                             @RequestParam(value = "cursor",defaultValue = "0") String cursor){
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != id);
+        return getUserCollectionHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
     }
 
     /**
