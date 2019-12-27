@@ -60,10 +60,10 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
     @Override
     public ArticleResponse execute(GetArticleCommentsRequest request) throws AppException {
         Integer userId = request.getId();
-        Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()),request.getLimit());
-        Page<Article> articlesPage = articleRepository.findArticlesByAuthorIdAndStatus(userId,"",pageable);
+        Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
+        Page<Article> articlesPage = articleRepository.findArticlesByAuthorIdAndStatus(userId, "", pageable);
         List<Article> articles = articlesPage.getContent();
-        if(CollectionUtils.isEmpty(articles)){
+        if (CollectionUtils.isEmpty(articles)) {
             ArticleResponse resp = new ArticleResponse(StatusCode.NOT_FOUND);
             resp.setErrorMessage(String.format("user %s not have article", userId));
             return resp;
@@ -75,18 +75,18 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
                 .collect(Collectors.toList());
 
         ArticleResponse resp = new ArticleResponse(StatusCode.SUCCESS);
-        resp.setData(new ArticleResponse.Data(articlesList,(int) articlesPage.getTotalElements(),
-                request.getCursor(),articlesPage.getTotalPages() > Integer.valueOf(request.getCursor())));
+        resp.setData(new ArticleResponse.Data(articlesList, (int) articlesPage.getTotalElements(),
+                request.getCursor(), articlesPage.getTotalPages() > Integer.valueOf(request.getCursor())));
         return resp;
     }
 
-    private Author assemblerAuthor(int authorId){
+    private Author assemblerAuthor(int authorId) {
         Optional<User> optionalUser = userRepository.findById(authorId);
         User user = optionalUser.isEmpty() ? null : optionalUser.get();
         return user == null ? null : new Author(user.getUserId(), user.getUserName(), user.getProfileImgUrl());
     }
 
-    private boolean checkIsLike(int userId, int articleId){
+    private boolean checkIsLike(int userId, int articleId) {
         List<ArticleLikeRelation> likeRelations = articleLikeRelationRepository.findByArticleIdAndAndLikeId(articleId, userId);
         return likeRelations.size() > 0;
     }

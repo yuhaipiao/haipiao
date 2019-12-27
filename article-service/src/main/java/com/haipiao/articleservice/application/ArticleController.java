@@ -46,8 +46,12 @@ public class ArticleController extends HealthzController {
     @Autowired
     private GetUserCollectionHandler getUserCollectionHandler;
 
+    @Autowired
+    private GetUserAlbumHandler getUserAlbumHandler;
+
     /**
      * API-23
+     *
      * @param articleID
      * @param sessionToken
      * @return
@@ -55,7 +59,7 @@ public class ArticleController extends HealthzController {
     @GetMapping("/article/{articleID}")
     public ResponseEntity<GetArticleResponse> getArticle(
             @CookieValue("session-token") String sessionToken,
-            @PathVariable(value="articleID") String articleID) {
+            @PathVariable(value = "articleID") String articleID) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         logger.info("articleID={}", articleID);
         Preconditions.checkArgument(StringUtils.isNotEmpty(articleID));
@@ -76,6 +80,7 @@ public class ArticleController extends HealthzController {
     /**
      * API-9
      * 根据场景推荐文章
+     *
      * @param sessionToken
      * @param context
      * @param category
@@ -97,7 +102,7 @@ public class ArticleController extends HealthzController {
                                                                                @RequestParam("latitude") float latitude,
                                                                                @RequestParam("longitude") float longitude,
                                                                                @RequestParam("limit") int limit,
-                                                                               @RequestParam("cursor") String cursor){
+                                                                               @RequestParam("cursor") String cursor) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
         return recommendationArticleHandler.handle(new RecommendationArticleRequest(context, category, article, user, latitude, longitude, limit, cursor));
@@ -117,6 +122,7 @@ public class ArticleController extends HealthzController {
     /**
      * API-19
      * 获取用户笔记
+     *
      * @param sessionToken
      * @param id
      * @param limit
@@ -127,8 +133,8 @@ public class ArticleController extends HealthzController {
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<ArticleResponse> getUserArticle(@CookieValue("session-token") String sessionToken,
                                                           @PathVariable(value = "id") Integer id,
-                                                          @RequestParam(value = "limit",defaultValue = "6") Integer limit,
-                                                          @RequestParam(value = "cursor",defaultValue = "0") String cursor){
+                                                          @RequestParam(value = "limit", defaultValue = "6") Integer limit,
+                                                          @RequestParam(value = "cursor", defaultValue = "0") String cursor) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         return getUserArticleHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
@@ -137,6 +143,7 @@ public class ArticleController extends HealthzController {
     /**
      * API-20
      * 获取用户收藏笔记
+     *
      * @param sessionToken
      * @param id
      * @param limit
@@ -147,23 +154,45 @@ public class ArticleController extends HealthzController {
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<ArticleResponse> getUserCollection(@CookieValue("session-token") String sessionToken,
                                                              @PathVariable(value = "id") Integer id,
-                                                             @RequestParam(value = "limit",defaultValue = "6") Integer limit,
-                                                             @RequestParam(value = "cursor",defaultValue = "0") String cursor){
+                                                             @RequestParam(value = "limit", defaultValue = "6") Integer limit,
+                                                             @RequestParam(value = "cursor", defaultValue = "0") String cursor) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         return getUserCollectionHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
     }
 
     /**
+     * API-21
+     * 获取用户收藏的专辑
+     *
+     * @param sessionToken
+     * @param id
+     * @param limit
+     * @param cursor
+     * @return
+     */
+    @GetMapping("/user/{id}/album")
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
+    public ResponseEntity<AlbumResponse> getUserAlbum(@CookieValue("session-token") String sessionToken,
+                                                      @PathVariable(value = "id") Integer id,
+                                                      @RequestParam(value = "limit", defaultValue = "6") Integer limit,
+                                                      @RequestParam(value = "cursor", defaultValue = "0") String cursor) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != id);
+        return getUserAlbumHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
+    }
+
+    /**
      * API-12
      * 用户取消文章点赞
+     *
      * @param id
      * @param sessionToken
      */
     @DeleteMapping("/article/{id}/like")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<LikeArticleResponse> cancelLikeArticle(@PathVariable(value = "id") int id,
-                                  @CookieValue("session-token") String sessionToken){
+                                                                 @CookieValue("session-token") String sessionToken) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         StringUtils.isNotEmpty(String.valueOf(id));
         LikeArticleRequest request = new LikeArticleRequest(id, DeleteAndLikeConstants.DELETE_LIKE_ARTICLE);
@@ -173,13 +202,14 @@ public class ArticleController extends HealthzController {
     /**
      * API-13
      * 用户对文章不感兴趣
+     *
      * @param id
      * @param sessionToken
      */
     @PostMapping("/article/{id}/dislike")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<DisLikeArticleResponse> disLikeArticle(@PathVariable(value = "id") int id,
-                                  @CookieValue("session-token") String sessionToken){
+                                                                 @CookieValue("session-token") String sessionToken) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
         return disLikeArticleHandler.handle(sessionToken, new DisLikeArticleRequest(id));
@@ -194,7 +224,7 @@ public class ArticleController extends HealthzController {
     public ResponseEntity<GetArticleCommentsResponse> getArticleComments(@CookieValue("session-token") String sessionToken,
                                                                          @PathVariable("id") int id,
                                                                          @RequestParam("cursor") String cursor,
-                                                                         @RequestParam("limit") int limit){
+                                                                         @RequestParam("limit") int limit) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
         GetArticleCommentsRequest request = new GetArticleCommentsRequest(id, cursor, limit);
