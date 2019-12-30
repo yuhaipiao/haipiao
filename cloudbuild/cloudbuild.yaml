@@ -47,9 +47,10 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
+
   - name: 'gcr.io/$PROJECT_ID/kustomize'
-    args: ['build', 'deployment/k8s']
-    id: kustomize-deploy
+    args: ['build', 'deployment/k8s/app']
+    id: kustomize-deploy-0-replicas
     waitFor:
       - kubectl-create-ns
       - docker-push-registration
@@ -60,6 +61,18 @@ steps:
       - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
       - 'GCLOUD_PROJECT=haipiao-dev'
+
+  - name: 'gcr.io/$PROJECT_ID/kustomize'
+    args: ['build', 'deployment/k8s']
+    id: kustomize-deploy
+    waitFor:
+      - kustomize-deploy-0-replicas
+    env:
+      - 'APPLY=true'
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-east2-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=hp-cluster'
+      - 'GCLOUD_PROJECT=haipiao-dev'
+
 
 secrets:
   - kmsKeyName: 'projects/haipiao-dev/locations/global/keyRings/haipiao-keyring/cryptoKeys/haipiao-docker'

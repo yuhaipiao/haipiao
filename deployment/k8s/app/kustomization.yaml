@@ -13,12 +13,14 @@ namePrefix: haipiao-
 #  someName: someValue
 
 resources:
-  - app/ingress.yaml
-  - app/configmap.yaml
-  - app/postgres.yaml
-  - app/redis.yaml
+  - ingress.yaml
+  - configmap.yaml
+  - postgres.yaml
+  - redis.yaml
+  - registration.yaml
+  - user-service.yaml
+  - article-service.yaml
+  - image-service.yaml
 
-  - app/registration.yaml
-  - app/user-service.yaml
-  - app/article-service.yaml
-  - app/image-service.yaml
+patchesStrategicMerge:
+  - set-replicas-patch.yaml
