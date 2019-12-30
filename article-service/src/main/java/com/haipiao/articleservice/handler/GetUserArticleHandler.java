@@ -2,19 +2,15 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleCommentsRequest;
 import com.haipiao.articleservice.dto.resp.ArticleResponse;
-import com.haipiao.articleservice.dto.resp.RecommendationArticleResponse;
 import com.haipiao.articleservice.dto.resp.vo.ArticleData;
-import com.haipiao.articleservice.dto.resp.vo.Author;
+import com.haipiao.articleservice.service.GetArticleCommonService;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.Article;
-import com.haipiao.persist.entity.ArticleLikeRelation;
-import com.haipiao.persist.entity.User;
-import com.haipiao.persist.repository.ArticleLikeRelationRepository;
 import com.haipiao.persist.repository.ArticleRepository;
-import com.haipiao.persist.repository.UserRepository;
+import com.haipiao.persist.repository.ImageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,21 +36,18 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
     @Autowired
     private ArticleRepository articleRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Resource
+    private GetArticleCommonService getArticleCommonService;
 
     @Autowired
-    private ArticleLikeRelationRepository articleLikeRelationRepository;
-
+    private ImageRepository imageRepository;
 
     protected GetUserArticleHandler(SessionService sessionService,
                                     ArticleRepository articleRepository,
-                                    UserRepository userRepository,
-                                    ArticleLikeRelationRepository articleLikeRelationRepository) {
+                                    ImageRepository imageRepository) {
         super(ArticleResponse.class, sessionService);
         this.articleRepository = articleRepository;
-        this.userRepository = userRepository;
-        this.articleLikeRelationRepository = articleLikeRelationRepository;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -71,7 +64,9 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
 
         List<ArticleData> articlesList = articles.stream()
                 .filter(Objects::nonNull)
-                .map(a -> new ArticleData("", a.getArticleId(), a.getTitle(), a.getLikes(), checkIsLike(a.getArticleId(), userId), assemblerAuthor(a.getAuthorId())))
+                .map(a -> new ArticleData(imageRepository.findFirstByArticleId(a.getArticleId(),0).getExternalUrl(),
+                        a.getArticleId(), a.getTitle(), a.getLikes(), getArticleCommonService.checkIsLike(a.getArticleId(), userId),
+                        getArticleCommonService.assemblerAuthor(a.getAuthorId())))
                 .collect(Collectors.toList());
 
         ArticleResponse resp = new ArticleResponse(StatusCode.SUCCESS);
@@ -79,16 +74,4 @@ public class GetUserArticleHandler extends AbstractHandler<GetArticleCommentsReq
                 request.getCursor(), articlesPage.getTotalPages() > Integer.valueOf(request.getCursor())));
         return resp;
     }
-
-    private Author assemblerAuthor(int authorId) {
-        Optional<User> optionalUser = userRepository.findById(authorId);
-        User user = optionalUser.isEmpty() ? null : optionalUser.get();
-        return user == null ? null : new Author(user.getUserId(), user.getUserName(), user.getProfileImgUrl());
-    }
-
-    private boolean checkIsLike(int userId, int articleId) {
-        List<ArticleLikeRelation> likeRelations = articleLikeRelationRepository.findByArticleIdAndAndLikeId(articleId, userId);
-        return likeRelations.size() > 0;
-    }
-
 }

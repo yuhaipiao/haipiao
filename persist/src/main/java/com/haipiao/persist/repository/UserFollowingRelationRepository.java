@@ -27,4 +27,15 @@ public interface UserFollowingRelationRepository extends CrudRepository<UserFoll
      */
     @Query(value = "select following_user_id from user_following_relation where user_id = ?1 order by id desc limit ?2, ?3", nativeQuery = true)
     List<Integer> findUserFollowingIdsByUserId(int userId, int beginNo, int pageSize);
+
+
+    /**
+     * 根据userId，groupIdBefore修改groupIdAfter
+     * @param userId
+     * @param groupIdBefore
+     * @param groupIdAfter
+     * @return
+     */
+    @Query(value = "update user_following_relation set group_id = ?3,update_ts = now() where user_id = ?1 and group_id = ?2",nativeQuery = true)
+    int updateGroupIdByGroupIdAndUserId(int userId, int groupIdBefore, int groupIdAfter);
 }

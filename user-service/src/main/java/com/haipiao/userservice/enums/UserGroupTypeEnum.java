@@ -13,6 +13,7 @@ public enum UserGroupTypeEnum {
     DEFAULT("default"),
     MISC("misc"),
     HOT("hot"),
+    ALL("all"),
     ;
     private String value;
 

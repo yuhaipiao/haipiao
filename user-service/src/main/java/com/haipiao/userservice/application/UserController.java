@@ -56,7 +56,7 @@ public class UserController extends HealthzController {
     private CreateGroupHandler createGroupHandler;
 
     @GetMapping("/user/{userID}/summary")
-    public ResponseEntity<GetUserResponse> getUserById(@PathVariable(value="userID") String userID) {
+    public ResponseEntity<GetUserResponse> getUserById(@PathVariable(value = "userID") String userID) {
         logger.info("userID={}", userID);
         Preconditions.checkArgument(StringUtils.isNotEmpty(userID));
 
@@ -84,7 +84,7 @@ public class UserController extends HealthzController {
 
     @GetMapping("/category")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
-    public ResponseEntity<GetCategoryResponse> category(@CookieValue("session-token") String sessionToken, @RequestParam("type") String type){
+    public ResponseEntity<GetCategoryResponse> category(@CookieValue("session-token") String sessionToken, @RequestParam("type") String type) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         GetCategoryRequest request = new GetCategoryRequest(type);
         Preconditions.checkArgument(StringUtils.isNotEmpty(type));
@@ -94,7 +94,7 @@ public class UserController extends HealthzController {
     @PostMapping("/user/category")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<SaveUserCategoryResponse> saveUserCategory(@CookieValue("session-token") String sessionToken,
-                                                                     @RequestBody SaveUserCategoryRequest request){
+                                                                     @RequestBody SaveUserCategoryRequest request) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         return saveCategoryHandler.handle(sessionToken, request);
     }
@@ -106,7 +106,7 @@ public class UserController extends HealthzController {
                                                                  @RequestParam("article") int article,
                                                                  @RequestParam("user") int user,
                                                                  @RequestParam("limit") int limit,
-                                                                 @RequestParam("cursor") String cursor){
+                                                                 @RequestParam("cursor") String cursor) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(context));
         RecommendationRequest request = new RecommendationRequest(context, article, user, limit, cursor);
@@ -116,8 +116,8 @@ public class UserController extends HealthzController {
     @PostMapping("/group/{group_id}/user/{followee_id}")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<FolloweeUserResponse> followeeUser(@CookieValue("session-token") String sessionToken,
-                                         @PathVariable(value="group_id") int groupId,
-                                         @PathVariable(value="followee_id") int followeeId){
+                                                             @PathVariable(value = "group_id") int groupId,
+                                                             @PathVariable(value = "followee_id") int followeeId) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(groupId)));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(followeeId)));
@@ -128,7 +128,7 @@ public class UserController extends HealthzController {
     @GetMapping("/user/{id}/category")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<GetUserAllCategoryResponse> getUserAllCategory(@CookieValue("session-token") String sessionToken,
-                                   @PathVariable(value="id") int id){
+                                                                         @PathVariable(value = "id") int id) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(String.valueOf(id)));
         return getUserAllCategoryHandler.handle(sessionToken, new GetUserAllCategoryRequest(id));
@@ -140,13 +140,14 @@ public class UserController extends HealthzController {
      * 检查当前用户所关注的用户是否有更新
      * check：用户的关注是否有更新。用于显示蓝湖图10关注标签上的小红点。
      * pull： 获取用户的关注的对象们的更新列表。
+     *
      * @param sessionToken
      * @param type
      */
     @GetMapping("/update/following")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<UpdateFollowingResponse> updateFollowing(@CookieValue("session-token") String sessionToken,
-                                                                   @RequestParam(value="type") String type){
+                                                                   @RequestParam(value = "type") String type) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(StringUtils.isNotEmpty(type));
         return updateFollowingHandler.handle(sessionToken, new UpdateFollowingRequest(type));
@@ -155,6 +156,7 @@ public class UserController extends HealthzController {
     /**
      * API-15
      * 获取当前用户所创建的所有“分组”,默认分组等
+     *
      * @param sessionToken
      * @param id
      * @return
@@ -162,18 +164,18 @@ public class UserController extends HealthzController {
     @GetMapping("/user/{id}/group")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<GetGroupResponse> getUserGroup(@CookieValue("session-token") String sessionToken,
-                                                         @PathVariable(value="id") Integer id,
-                                                         @RequestParam(value="type") String type){
+                                                         @PathVariable(value = "id") Integer id,
+                                                         @RequestParam(value = "type") String type) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         Preconditions.checkArgument(UserGroupTypeEnum.checkType(type));
-        return getUserGroupHandler.handle(sessionToken, new GetUserGroupRequest(id,type));
+        return getUserGroupHandler.handle(sessionToken, new GetUserGroupRequest(id, type));
     }
-
 
     /**
      * API-17
      * 删除分组
+     *
      * @param sessionToken
      * @param id
      * @return
@@ -181,7 +183,7 @@ public class UserController extends HealthzController {
     @DeleteMapping("/group/{id}")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<OperateResponse> deleteGroup(@CookieValue("session-token") String sessionToken,
-                                                             @PathVariable(value="id") Integer id){
+                                                       @PathVariable(value = "id") Integer id) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         return deleteGroupHandler.handle(sessionToken, new DeleteGroupRequest(id));
@@ -190,6 +192,7 @@ public class UserController extends HealthzController {
     /**
      * API-18
      * 新建分组
+     *
      * @param sessionToken
      * @param userId
      * @param groupName
@@ -198,18 +201,19 @@ public class UserController extends HealthzController {
     @PostMapping("/group")
     @Transactional(rollbackFor = Throwable.class)
     public ResponseEntity<OperateResponse> CreateGroup(@CookieValue("session-token") String sessionToken,
-                                                       @RequestParam(value="user_id") Integer userId,
-                                                       @RequestParam(value="group_name") String groupName){
+                                                       @RequestParam(value = "user_id") Integer userId,
+                                                       @RequestParam(value = "group_name") String groupName) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != userId);
         Preconditions.checkArgument(StringUtils.isNotEmpty(groupName));
-        return createGroupHandler.handle(sessionToken, new CreateGroupRequest(userId,groupName));
+        return createGroupHandler.handle(sessionToken, new CreateGroupRequest(userId, groupName));
     }
 
 
     /**
      * API-22
      * 获取用户所有粉丝
+     *
      * @param sessionToken
      * @param id
      * @param limit
@@ -218,9 +222,9 @@ public class UserController extends HealthzController {
     @GetMapping("/user/{id}/follower")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<GetUserFollowerResponse> getUserFollower(@CookieValue("session-token") String sessionToken,
-                             @PathVariable("id") int id,
-                             @RequestParam("limit") int limit,
-                             @RequestParam("cursor") String cursor){
+                                                                   @PathVariable("id") int id,
+                                                                   @RequestParam("limit") int limit,
+                                                                   @RequestParam("cursor") String cursor) {
         GetUserFollowerRequest request = new GetUserFollowerRequest(id, limit, cursor);
         return getUserFollowerHandler.handle(sessionToken, request);
     }

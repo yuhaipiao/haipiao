@@ -7,6 +7,7 @@ import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.entity.UserFollowingRelation;
 import com.haipiao.persist.entity.UserGroup;
+import com.haipiao.persist.repository.UserFollowingRelationRepository;
 import com.haipiao.persist.repository.UserGroupRepository;
 import com.haipiao.persist.repository.UserRepository;
 import com.haipiao.userservice.enums.UserGroupTypeEnum;
@@ -44,11 +45,19 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserFollowingRelationRepository userFollowingRelationRepository;
+
+
+
     public DeleteGroupHandler(SessionService sessionService,
-                              UserGroupRepository userGroupRepository,UserRepository userRepository) {
+                              UserGroupRepository userGroupRepository,
+                              UserRepository userRepository,
+                              UserFollowingRelationRepository userFollowingRelationRepository) {
         super(OperateResponse.class, sessionService);
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
+        this.userFollowingRelationRepository = userFollowingRelationRepository;
     }
 
     @Override
@@ -66,7 +75,7 @@ public class DeleteGroupHandler extends AbstractHandler<DeleteGroupRequest, Oper
             resp.setErrorMessage(String.format("%s 不属于 %s 用户",groupId, userId));
             return resp;
         }
-
+        userFollowingRelationRepository.updateGroupIdByGroupIdAndUserId(userId,groupId,0);
         userRepository.deleteById(groupId);
         OperateResponse resp = new OperateResponse(SUCCESS);
         return resp;
