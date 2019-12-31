@@ -3,6 +3,7 @@ package com.haipiao.articleservice.dto.resp.vo;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author: wangshun
@@ -15,7 +16,7 @@ public class AlbumData implements Serializable {
     private String title;
 
     @SerializedName("cover_image_urls")
-    private String coverImageUrls;
+    private List<String> coverImageUrls;
 
     @SerializedName("articles_count")
     private int articlesCount;
@@ -23,7 +24,7 @@ public class AlbumData implements Serializable {
     @SerializedName("followers_count")
     private int followersCount;
 
-    public AlbumData(int id, String title, String coverImageUrls, int articlesCount, int followersCount) {
+    public AlbumData(int id, String title, List<String> coverImageUrls, int articlesCount, int followersCount) {
         this.id = id;
         this.title = title;
         this.coverImageUrls = coverImageUrls;
@@ -47,11 +48,11 @@ public class AlbumData implements Serializable {
         this.title = title;
     }
 
-    public String getCoverImageUrls() {
+    public List<String> getCoverImageUrls() {
         return coverImageUrls;
     }
 
-    public void setCoverImageUrls(String coverImageUrls) {
+    public void setCoverImageUrls(List<String> coverImageUrls) {
         this.coverImageUrls = coverImageUrls;
     }
 

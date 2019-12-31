@@ -43,4 +43,11 @@ public interface ArticleRepository extends CrudRepository<Article, Integer> {
     Page<Article> findArticlesByCollectorIdAndStatus(Integer collectorId, String status, Pageable pageable);
 
 
+    @Query(value = "select count(a.article_id) " +
+            "from album_article_relation aar " +
+            "join article a on aar.article_id = a.article_id " +
+            "where aar.album_id = ?1",nativeQuery = true)
+    int countByAlbumId(Integer albumId);
+
+
 }
