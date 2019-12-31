@@ -49,6 +49,9 @@ public class ArticleController extends HealthzController {
     @Autowired
     private GetUserAlbumHandler getUserAlbumHandler;
 
+    @Autowired
+    private GetUserFollowerHandler getUserFollowerHandler;
+
     /**
      * API-23
      *
@@ -180,6 +183,27 @@ public class ArticleController extends HealthzController {
         Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
         Preconditions.checkArgument(null != id);
         return getUserAlbumHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
+    }
+
+    /**
+     * API-22
+     * 获取用户粉丝列表
+     *
+     * @param sessionToken
+     * @param id
+     * @param limit
+     * @param cursor
+     * @return
+     */
+    @GetMapping("/user/{id}/follower")
+    @Transactional(rollbackFor = Throwable.class, readOnly = true)
+    public ResponseEntity<FollowerResponse> getUserFollower(@CookieValue("session-token") String sessionToken,
+                                                      @PathVariable(value = "id") Integer id,
+                                                      @RequestParam(value = "limit", defaultValue = "6") Integer limit,
+                                                      @RequestParam(value = "cursor", defaultValue = "0") String cursor) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(sessionToken));
+        Preconditions.checkArgument(null != id);
+        return getUserFollowerHandler.handle(new GetArticleCommentsRequest(id, cursor, limit));
     }
 
     /**

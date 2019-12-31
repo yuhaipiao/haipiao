@@ -1145,7 +1145,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
 {
   "status_code": "SUCCESS",
   "data": {
-    "articles": [
+    "albums": [
       {
         "id": 1234,
         "title": 旧金山旅游攻略,
@@ -1204,7 +1204,7 @@ image tag中的x和y都是int，x表示的浮点数是0.001*x。
       {
         "id": 123,
         "name": "小红",
-        "profile_image_urls": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg",
+        "profile_image_url": "aliyun-abc.oss-cn-hangzhou.aliyuncs.com/user/1234.jpg",
         "followers_count": 20,
         "followered": true
       },
