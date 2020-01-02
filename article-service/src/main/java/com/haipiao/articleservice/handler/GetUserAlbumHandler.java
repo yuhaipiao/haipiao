@@ -56,12 +56,12 @@ public class GetUserAlbumHandler extends AbstractHandler<GetArticleCommentsReque
 
     @Override
     public AlbumResponse execute(GetArticleCommentsRequest request) throws AppException {
+        AlbumResponse resp = new AlbumResponse(StatusCode.SUCCESS);
         Integer userId = request.getId();
         Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
         Page<Album> albumPage = albumRepository.findArticlesByfollowerIdForPage(userId, pageable);
         List<Album> albums = albumPage.getContent();
         if (CollectionUtils.isEmpty(albums)) {
-            AlbumResponse resp = new AlbumResponse(StatusCode.NOT_FOUND);
             resp.setErrorMessage(String.format("user %s not have albums", userId));
             return resp;
         }
@@ -74,9 +74,8 @@ public class GetUserAlbumHandler extends AbstractHandler<GetArticleCommentsReque
                         userAlbumRelationRepository.countByAlbumId(a.getAlbumId())))
                 .collect(Collectors.toList());
 
-        AlbumResponse resp = new AlbumResponse(StatusCode.SUCCESS);
         resp.setData(new AlbumResponse.Data(albumList, (int) albumPage.getTotalElements(),
-                request.getCursor(), albumPage.getTotalPages() > Integer.valueOf(request.getCursor())));
+                request.getCursor()+albums.size(), albumPage.getTotalPages() > Integer.valueOf(request.getCursor())));
         return resp;
     }
 }

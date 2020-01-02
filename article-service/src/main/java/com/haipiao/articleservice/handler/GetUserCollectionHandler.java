@@ -52,12 +52,12 @@ public class GetUserCollectionHandler extends AbstractHandler<GetArticleComments
 
     @Override
     public ArticleResponse execute(GetArticleCommentsRequest request) throws AppException {
+        ArticleResponse resp = new ArticleResponse(StatusCode.SUCCESS);
         Integer userId = request.getId();
         Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
         Page<Article> articlesPage = articleRepository.findArticlesByCollectorIdAndStatus(userId, "", pageable);
         List<Article> articles = articlesPage.getContent();
         if (CollectionUtils.isEmpty(articles)) {
-            ArticleResponse resp = new ArticleResponse(StatusCode.NOT_FOUND);
             resp.setErrorMessage(String.format("user %s not have collection article", userId));
             return resp;
         }
@@ -69,9 +69,8 @@ public class GetUserCollectionHandler extends AbstractHandler<GetArticleComments
                         getArticleCommonService.assemblerAuthor(userId)))
                 .collect(Collectors.toList());
 
-        ArticleResponse resp = new ArticleResponse(StatusCode.SUCCESS);
         resp.setData(new ArticleResponse.Data(articlesList, (int) articlesPage.getTotalElements(),
-                request.getCursor(), articlesPage.getTotalPages() > Integer.valueOf(request.getCursor())));
+                request.getCursor()+articles.size(), articlesPage.getTotalPages() > Integer.valueOf(request.getCursor())));
         return resp;
     }
 }

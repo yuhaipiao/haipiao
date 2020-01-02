@@ -49,12 +49,12 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
 
     @Override
     public FollowerResponse execute(GetArticleCommentsRequest request) throws AppException {
+        FollowerResponse resp = new FollowerResponse(StatusCode.SUCCESS);
         Integer userId = request.getId();
         Pageable pageable = PageRequest.of(Integer.valueOf(request.getCursor()), request.getLimit());
         Page<User> userPage = userRepository.findFollowersByUserIdForPage(userId, pageable);
         List<User> users = userPage.getContent();
         if (CollectionUtils.isEmpty(users)) {
-            FollowerResponse resp = new FollowerResponse(StatusCode.NOT_FOUND);
             resp.setErrorMessage(String.format("user %s not have followers", userId));
             return resp;
         }
@@ -66,9 +66,8 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
                         userAlbumRelationRepository.countByUserIdAndFollowingUserId(a.getUserId(),userId) > 0))
                 .collect(Collectors.toList());
 
-        FollowerResponse resp = new FollowerResponse(StatusCode.SUCCESS);
         resp.setData(new FollowerResponse.Data(followerList, (int) userPage.getTotalElements(),
-                request.getCursor(), userPage.getTotalPages() > Integer.valueOf(request.getCursor())));
+                request.getCursor()+users.size(), userPage.getTotalPages() > Integer.valueOf(request.getCursor())));
         return resp;
     }
 }
