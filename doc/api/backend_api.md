@@ -1561,6 +1561,14 @@ name，gender， location， birthday， signature
 
 ### 62. 获取达人列表
 
+## 通知系统
+
+通知系统将集成极光推送(www.jiguang.cn/push)。
+每一个设备在注册的时候都需要获取一个极光推送的registrationID(https://docs.jiguang.cn/jpush/client/iOS/ios_api/#registrationid)。
+这个registrationID需要存储在数据库的用户表中，推送通知时需要这个registrationID。
+参考文档：http://docs.jiguang.cn/jpush/server/push/rest_api_v3_push/
+例子：https://github.com/jpush/jpush-api-java-client
+
 ### 63. 获取赞的N条通知
 
 ### 64. 获取收藏的N条通知
@@ -1574,6 +1582,3 @@ name，gender， location， birthday， signature
 ### 68. 获取系统通知的N条通知
 
 ### 69. 获取私信的N条通知
-
-
-
