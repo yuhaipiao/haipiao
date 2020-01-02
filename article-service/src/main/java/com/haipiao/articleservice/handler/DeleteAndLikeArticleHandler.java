@@ -61,8 +61,8 @@ public class DeleteAndLikeArticleHandler extends AbstractHandler<LikeArticleRequ
         }
         if (request.getType() == DeleteAndLikeConstants.LIKE_ARTICLE){
             // TODO queue选型确定，使用队列批量处理，此逻辑为点赞队列消费逻辑
-            long followerCount = userFollowingRelationRepository.findByUserId(userId);
-            ArticleLikeRelation relation = articleLikeRelationRepository.save(new ArticleLikeRelation(userId, articleId, (int) followerCount));
+            int followerCount = userFollowingRelationRepository.countByUserId(userId);
+            ArticleLikeRelation relation = articleLikeRelationRepository.save(new ArticleLikeRelation(userId, articleId, followerCount));
             LOG.info("Save user:{} Likes Article:{} successfully", relation.getLikeId(), relation.getArticleId());
         } else {
             // TODO queue选型确定，使用队列批量处理，此逻辑为取消点赞队列消费逻辑

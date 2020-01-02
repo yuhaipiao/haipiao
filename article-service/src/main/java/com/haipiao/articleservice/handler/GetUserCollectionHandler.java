@@ -2,20 +2,15 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleCommentsRequest;
 import com.haipiao.articleservice.dto.resp.ArticleResponse;
-import com.haipiao.articleservice.dto.resp.vo.ArticleData;
-import com.haipiao.articleservice.dto.resp.vo.Author;
 import com.haipiao.articleservice.service.GetArticleCommonService;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.Article;
-import com.haipiao.persist.entity.ArticleLikeRelation;
-import com.haipiao.persist.entity.User;
-import com.haipiao.persist.repository.ArticleLikeRelationRepository;
 import com.haipiao.persist.repository.ArticleRepository;
 import com.haipiao.persist.repository.ImageRepository;
-import com.haipiao.persist.repository.UserRepository;
+import com.haipiao.persist.vo.ArticleData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

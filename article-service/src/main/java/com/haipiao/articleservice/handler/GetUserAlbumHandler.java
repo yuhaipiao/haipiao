@@ -2,14 +2,13 @@ package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleCommentsRequest;
 import com.haipiao.articleservice.dto.resp.AlbumResponse;
-import com.haipiao.articleservice.dto.resp.ArticleResponse;
-import com.haipiao.articleservice.dto.resp.vo.AlbumData;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
 import com.haipiao.persist.entity.Album;
 import com.haipiao.persist.repository.*;
+import com.haipiao.persist.vo.AlbumData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

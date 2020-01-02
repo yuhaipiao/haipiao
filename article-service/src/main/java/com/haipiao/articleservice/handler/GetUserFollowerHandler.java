@@ -1,17 +1,16 @@
 package com.haipiao.articleservice.handler;
 
 import com.haipiao.articleservice.dto.req.GetArticleCommentsRequest;
-import com.haipiao.articleservice.dto.resp.AlbumResponse;
 import com.haipiao.articleservice.dto.resp.FollowerResponse;
-import com.haipiao.articleservice.dto.resp.vo.AlbumData;
-import com.haipiao.articleservice.dto.resp.vo.FollowerData;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.exception.AppException;
 import com.haipiao.common.handler.AbstractHandler;
 import com.haipiao.common.service.SessionService;
-import com.haipiao.persist.entity.Album;
 import com.haipiao.persist.entity.User;
-import com.haipiao.persist.repository.*;
+import com.haipiao.persist.repository.UserAlbumRelationRepository;
+import com.haipiao.persist.repository.UserFollowingRelationRepository;
+import com.haipiao.persist.repository.UserRepository;
+import com.haipiao.persist.vo.FollowerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +35,16 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserFollowingRelationRepository userAlbumRelationRepository;
+
+
     protected GetUserFollowerHandler(SessionService sessionService,
-                                     UserRepository userRepository) {
+                                     UserRepository userRepository,
+                                     UserFollowingRelationRepository userAlbumRelationRepository) {
         super(FollowerResponse.class, sessionService);
         this.userRepository = userRepository;
+        this.userAlbumRelationRepository = userAlbumRelationRepository;
     }
 
     @Override
@@ -54,10 +59,11 @@ public class GetUserFollowerHandler extends AbstractHandler<GetArticleCommentsRe
             return resp;
         }
 
-        //TODO 粉丝数以及是否关注该粉丝
         List<FollowerData> followerList = users.stream()
                 .filter(Objects::nonNull)
-                .map(a -> new FollowerData(a.getUserId(),a.getUserName(),a.getProfileImgUrl(),0,false))
+                .map(a -> new FollowerData(a.getUserId(),a.getUserName(),a.getProfileImgUrl(),
+                        userAlbumRelationRepository.countByUserId(a.getUserId()),
+                        userAlbumRelationRepository.countByUserIdAndFollowingUserId(a.getUserId(),userId) > 0))
                 .collect(Collectors.toList());
 
         FollowerResponse resp = new FollowerResponse(StatusCode.SUCCESS);

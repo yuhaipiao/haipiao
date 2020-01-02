@@ -97,7 +97,7 @@ public class RecommendationHandler extends AbstractHandler<RecommendationRequest
         return list;
     }
 
-    private long findUserFollowee(int userId){
-        return userFollowingRelationRepository.findByUserId(userId);
+    private int findUserFollowee(int userId){
+        return userFollowingRelationRepository.countByUserId(userId);
     }
 }

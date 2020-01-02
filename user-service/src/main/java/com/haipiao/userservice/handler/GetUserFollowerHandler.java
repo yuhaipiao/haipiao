@@ -54,7 +54,7 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
             return response;
         }
 
-        int totalCount = (int)getTotalCount(request.getId());
+        int totalCount = getTotalCount(request.getId());
         response.setData(new GetUserFollowerResponse.Data(getFollowerList(followingIds), totalCount, String.valueOf(limit + cursor), cursor < totalCount));
         return response;
     }
@@ -63,11 +63,11 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
         Iterable<User> users = userRepository.findAllById(followingIds);
         return StreamSupport.stream(users.spliterator(), false)
                 .filter(Objects::nonNull)
-                .map(u -> new GetUserFollowerResponse.Data.Follower(u.getUserId(), u.getUserName(), u.getProfileImgUrl(), (int)getTotalCount(u.getUserId()), true))
+                .map(u -> new GetUserFollowerResponse.Data.Follower(u.getUserId(), u.getUserName(), u.getProfileImgUrl(), getTotalCount(u.getUserId()), true))
                 .collect(Collectors.toList());
     }
 
-    private long getTotalCount(int id){
-        return userFollowingRelationRepository.findByUserId(id);
+    private int getTotalCount(int id){
+        return userFollowingRelationRepository.countByUserId(id);
     }
 }

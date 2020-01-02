@@ -1,6 +1,7 @@
-package com.haipiao.articleservice.dto.resp.vo;
+package com.haipiao.persist.vo;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**

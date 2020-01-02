@@ -16,7 +16,16 @@ public interface UserFollowingRelationRepository extends CrudRepository<UserFoll
      * @param userId
      * @return long
      */
-    long findByUserId(int userId);
+    int countByUserId(int userId);
+
+
+    /**
+     * 根据userId与followingUserId查询数量
+     * @param userId
+     * @param followingUserId
+     * @return
+     */
+    int countByUserIdAndFollowingUserId(int userId, int followingUserId);
 
     /**
      * 获取所有关注此用户的用户Id
@@ -27,7 +36,6 @@ public interface UserFollowingRelationRepository extends CrudRepository<UserFoll
      */
     @Query(value = "select following_user_id from user_following_relation where user_id = ?1 order by id desc limit ?2, ?3", nativeQuery = true)
     List<Integer> findUserFollowingIdsByUserId(int userId, int beginNo, int pageSize);
-
 
     /**
      * 根据userId，groupIdBefore修改groupIdAfter

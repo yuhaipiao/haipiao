@@ -1,10 +1,9 @@
 package com.haipiao.articleservice.dto.resp;
 
 import com.google.gson.annotations.SerializedName;
-import com.haipiao.articleservice.dto.resp.vo.AlbumData;
-import com.haipiao.articleservice.dto.resp.vo.ArticleData;
 import com.haipiao.common.enums.StatusCode;
 import com.haipiao.common.resp.AbstractResponse;
+import com.haipiao.persist.vo.AlbumData;
 
 import java.util.List;
 

@@ -219,7 +219,7 @@ public class UserController extends HealthzController {
      * @param limit
      * @param cursor
      */
-    @GetMapping("/user/{id}/follower")
+    @GetMapping("/user/{id}/follower1")
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
     public ResponseEntity<GetUserFollowerResponse> getUserFollower(@CookieValue("session-token") String sessionToken,
                                                                    @PathVariable("id") int id,

@@ -1,12 +1,10 @@
 package com.haipiao.articleservice.service;
 
-import com.haipiao.articleservice.dto.resp.vo.Author;
 import com.haipiao.persist.entity.ArticleLikeRelation;
-import com.haipiao.persist.entity.Image;
 import com.haipiao.persist.entity.User;
 import com.haipiao.persist.repository.ArticleLikeRelationRepository;
-import com.haipiao.persist.repository.ImageRepository;
 import com.haipiao.persist.repository.UserRepository;
+import com.haipiao.persist.vo.Author;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

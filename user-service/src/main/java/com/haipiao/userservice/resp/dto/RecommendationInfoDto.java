@@ -17,7 +17,7 @@ public class RecommendationInfoDto {
     private String profileImageUrl;
 
     @SerializedName("followers_count")
-    private long followersCount;
+    private int followersCount;
 
     @SerializedName("description")
     private String description;
@@ -25,7 +25,7 @@ public class RecommendationInfoDto {
     public RecommendationInfoDto() {
     }
 
-    public RecommendationInfoDto(int id, String name, String profileImageUrl, long followersCount, String description) {
+    public RecommendationInfoDto(int id, String name, String profileImageUrl, int followersCount, String description) {
         this.id = id;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -57,11 +57,11 @@ public class RecommendationInfoDto {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public long getFollowersCount() {
+    public int getFollowersCount() {
         return followersCount;
     }
 
-    public void setFollowersCount(long followersCount) {
+    public void setFollowersCount(int followersCount) {
         this.followersCount = followersCount;
     }
 

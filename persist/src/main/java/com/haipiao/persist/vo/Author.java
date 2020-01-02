@@ -1,14 +1,13 @@
-package com.haipiao.articleservice.dto.resp.vo;
+package com.haipiao.persist.vo;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @Author: wangshun
  */
-public class FollowerData implements Serializable {
+public class Author implements Serializable {
     @SerializedName("id")
     private int id;
 
@@ -18,18 +17,10 @@ public class FollowerData implements Serializable {
     @SerializedName("profile_image_url")
     private String profileImageUrl;
 
-    @SerializedName("followersCount")
-    private int followersCount;
-
-    @SerializedName("followered")
-    private Boolean followered;
-
-    public FollowerData(int id, String name, String profileImageUrl, int followersCount, Boolean followered) {
+    public Author(int id, String name, String profileImageUrl) {
         this.id = id;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
-        this.followersCount = followersCount;
-        this.followered = followered;
     }
 
     public int getId() {
@@ -54,21 +45,5 @@ public class FollowerData implements Serializable {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
-    }
-
-    public int getFollowersCount() {
-        return followersCount;
-    }
-
-    public void setFollowersCount(int followersCount) {
-        this.followersCount = followersCount;
-    }
-
-    public Boolean getFollowered() {
-        return followered;
-    }
-
-    public void setFollowered(Boolean followered) {
-        this.followered = followered;
     }
 }
