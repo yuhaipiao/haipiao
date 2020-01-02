@@ -260,14 +260,28 @@ create table user_album_relation
 create table article_like_relation
 (
     id                               bigserial, -- 行id，主键
-    liker_id                         integer,   -- 点赞者id
+    user_id                          integer,   -- 点赞者id
     article_id                       integer,   -- 文章id
     liker_follower_count_approximate integer,   -- 点赞者的粉丝数（近似值）
     create_ts                        timestamp,
     update_ts                        timestamp,
     constraint article_like_relation_pk primary key (id),
-    constraint article_like_relation_fk1 foreign key (liker_id) references hp_user (user_id),
+    constraint article_like_relation_fk1 foreign key (user_id) references hp_user (user_id),
     constraint article_like_relation_fk2 foreign key (article_id) references article (article_id)
+);
+
+-- 文章与标记文章为"不感兴趣"的用户关系表（N : N）
+-- 一个文章可以被多个用户标记为"不感兴趣"，一个用户可以标记多篇文章为"不感兴趣"
+create table article_dislike_relation
+(
+    id         bigserial, -- 行id，主键
+    user_id    integer,   -- 标记文章为"不感兴趣"的用户id
+    article_id integer,   -- 文章id
+    create_ts  timestamp,
+    update_ts  timestamp,
+    constraint article_dislike_relation_pk primary key (id),
+    constraint article_dislike_relation_fk1 foreign key (user_id) references hp_user (user_id),
+    constraint article_dislike_relation_fk2 foreign key (article_id) references article (article_id)
 );
 
 -- 文章与收藏者关系表
