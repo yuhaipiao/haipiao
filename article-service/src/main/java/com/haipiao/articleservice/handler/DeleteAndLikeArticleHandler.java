@@ -55,7 +55,7 @@ public class DeleteAndLikeArticleHandler extends AbstractHandler<LikeArticleRequ
         if (optional.isEmpty()){
             String errorMessage = "当前文章不存在...";
             LOG.info(errorMessage);
-            LikeArticleResponse response = new LikeArticleResponse(StatusCode.THIS_ARTICLE_IS_NOT_EXIST);
+            LikeArticleResponse response = new LikeArticleResponse(StatusCode.NOT_FOUND);
             response.setErrorMessage(errorMessage);
             return response;
         }
@@ -66,7 +66,7 @@ public class DeleteAndLikeArticleHandler extends AbstractHandler<LikeArticleRequ
             LOG.info("Save user:{} Likes Article:{} successfully", relation.getLikeId(), relation.getArticleId());
         } else {
             // TODO queue选型确定，使用队列批量处理，此逻辑为取消点赞队列消费逻辑
-            articleLikeRelationRepository.deleteById(articleId);
+            articleLikeRelationRepository.deleteByArticleIdAndLikeId(articleId, userId);
             LOG.info("User:{} cancels likes for Article:{}", userId, articleId);
         }
         return new LikeArticleResponse(StatusCode.SUCCESS);

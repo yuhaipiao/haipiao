@@ -62,7 +62,7 @@ public class GetArticleCommentsHandler extends AbstractHandler<GetArticleComment
         if (article.isEmpty()){
             String errorMessage = String.format("Id为%s的文章不存在!", request.getId());
             LOG.info(errorMessage);
-            response = new GetArticleCommentsResponse(StatusCode.BAD_REQUEST);
+            response = new GetArticleCommentsResponse(StatusCode.NOT_FOUND);
             response.setErrorMessage(errorMessage);
             return response;
         }

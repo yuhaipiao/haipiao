@@ -55,16 +55,21 @@ public class GetUserFollowerHandler extends AbstractHandler<GetUserFollowerReque
         }
 
         int totalCount = getTotalCount(request.getId());
-        response.setData(new GetUserFollowerResponse.Data(getFollowerList(followingIds), totalCount, String.valueOf(limit + cursor), cursor < totalCount));
+        response.setData(new GetUserFollowerResponse.Data(getFollowerList(followingIds, request.getId()), totalCount, String.valueOf(limit + cursor), cursor < totalCount));
         return response;
     }
 
-    private List<GetUserFollowerResponse.Data.Follower> getFollowerList(List<Integer> followingIds){
+    private List<GetUserFollowerResponse.Data.Follower> getFollowerList(List<Integer> followingIds, int thisUserId){
         Iterable<User> users = userRepository.findAllById(followingIds);
         return StreamSupport.stream(users.spliterator(), false)
                 .filter(Objects::nonNull)
-                .map(u -> new GetUserFollowerResponse.Data.Follower(u.getUserId(), u.getUserName(), u.getProfileImgUrl(), getTotalCount(u.getUserId()), true))
+                .map(u -> new GetUserFollowerResponse.Data.Follower(u.getUserId(), u.getUserName(), u.getProfileImgUrl(), getTotalCount(u.getUserId()), checkThisUserIsFollower(u.getUserId(), thisUserId)))
                 .collect(Collectors.toList());
+    }
+
+    private boolean checkThisUserIsFollower(int followerId, int thisUserId){
+        int i = userFollowingRelationRepository.countByUserIdAndFollowingUserId(followerId, thisUserId);
+        return i != 0;
     }
 
     private int getTotalCount(int id){

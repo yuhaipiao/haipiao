@@ -18,4 +18,11 @@ public interface ArticleLikeRelationRepository extends CrudRepository<ArticleLik
      * @return
      */
     List<ArticleLikeRelation> findByArticleIdAndAndLikeId(int articleId, int likeId);
+
+    /**
+     * 根据文章id及点赞者id删除点赞记录
+     * @param id
+     * @param likeId
+     */
+    void deleteByArticleIdAndLikeId(int id, int likeId);
 }
