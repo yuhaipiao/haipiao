@@ -7,6 +7,13 @@ public class GetUserRequest extends AbstractRequest {
     @SerializedName("id")
     private Integer id;
 
+    public GetUserRequest() {
+    }
+
+    public GetUserRequest(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

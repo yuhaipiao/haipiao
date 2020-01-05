@@ -1,6 +1,8 @@
 package com.haipiao.userservice.enums;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wangjipeng
@@ -10,32 +12,29 @@ public enum GetCategoryEnum {
     /**
      * 获取分类映射分类TYpe
      */
-    ALL("all", 1),
-    HOT("hot", 2),
-    MISC("misc", 3);
+    DEFAULT("default"),
+    HOT("hot"),
+    MISC("misc");
 
     private String value;
 
-    private int type;
-
-    GetCategoryEnum(String value, int type) {
+    GetCategoryEnum(String value) {
         this.value = value;
-        this.type = type;
     }
 
     public String getValue() {
         return value;
     }
 
-    public int getType() {
-        return type;
+    public static boolean checkType(String type){
+        GetCategoryEnum[] values = GetCategoryEnum.values();
+        List<String> collect = Arrays.stream(values).map(GetCategoryEnum::getValue).collect(Collectors.toList());
+        return collect.contains(type);
     }
 
-    public static GetCategoryEnum findByValue(String value){
-        GetCategoryEnum[] values = GetCategoryEnum.values();
-        return Arrays.stream(values)
-                .filter(v -> v.value.equalsIgnoreCase(value))
-                .findFirst()
-                .orElse(null);
+    public static void main(String[] args) {
+        System.out.println(111);
     }
+
+
 }

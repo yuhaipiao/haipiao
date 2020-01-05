@@ -1,7 +1,6 @@
 package com.haipiao.persist.repository;
 
 import com.haipiao.persist.entity.Category;
-import com.haipiao.persist.entity.CommentReply;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -16,5 +15,5 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
      * @param type
      * @return
      */
-    List<Category> findByType(int type);
+    List<Category> findByType(String type);
 }

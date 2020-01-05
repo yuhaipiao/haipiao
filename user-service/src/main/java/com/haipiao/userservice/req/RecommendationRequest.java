@@ -21,12 +21,12 @@ public class RecommendationRequest extends AbstractRequest {
     private int limit;
 
     @SerializedName("cursor")
-    private int cursor;
+    private String cursor;
 
     public RecommendationRequest() {
     }
 
-    public RecommendationRequest(String context, int articleId, int userId, int limit, int cursor) {
+    public RecommendationRequest(String context, int articleId, int userId, int limit, String cursor) {
         this.context = context;
         this.articleId = articleId;
         this.userId = userId;
@@ -66,11 +66,11 @@ public class RecommendationRequest extends AbstractRequest {
         this.limit = limit;
     }
 
-    public int getCursor() {
+    public String getCursor() {
         return cursor;
     }
 
-    public void setCursor(int cursor) {
+    public void setCursor(String cursor) {
         this.cursor = cursor;
     }
 }

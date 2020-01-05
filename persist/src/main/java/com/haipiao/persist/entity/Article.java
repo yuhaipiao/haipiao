@@ -2,14 +2,11 @@ package com.haipiao.persist.entity;
 
 import com.haipiao.persist.enums.ArticleStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "article")
 public class Article extends BaseEntity {
 
     @Id

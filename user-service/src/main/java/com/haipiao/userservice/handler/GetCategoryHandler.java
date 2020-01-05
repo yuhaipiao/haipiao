@@ -45,13 +45,18 @@ public class GetCategoryHandler extends AbstractHandler<GetCategoryRequest, GetC
      */
     @Override
     protected GetCategoryResponse execute(GetCategoryRequest request) throws AppException {
+        if (GetCategoryEnum.checkType(request.getType())){
+            GetCategoryResponse response = new GetCategoryResponse(StatusCode.BAD_REQUEST);
+            response.setErrorMessage(String.format("%s: 无此分类Type", request.getType()));
+            return response;
+        }
         GetCategoryResponse.Data data = new GetCategoryResponse.Data();
-        Iterable<Category> all = categoryRepository.findByType(GetCategoryEnum.findByValue(request.getType()).getType());
+        Iterable<Category> all = categoryRepository.findByType(request.getType());
         List<CategoryInfoDto> list = StreamSupport.stream(all.spliterator(), false)
                 .filter(Objects::nonNull)
                 .map(c -> new CategoryInfoDto(c.getCategoryId(), c.getCategoryName(), ""))
                 .collect(Collectors.toList());
-        data.setList(list);
+        data.setCategories(list);
         GetCategoryResponse response = new GetCategoryResponse(StatusCode.SUCCESS);
         response.setData(data);
         return response;

@@ -1,4 +1,4 @@
-package com.haipiao.userservice.handler.interfaces;
+package com.haipiao.userservice.handler.factory;
 
 import com.haipiao.userservice.enums.RecommendationContextEnum;
 import org.springframework.beans.factory.annotation.Autowired;

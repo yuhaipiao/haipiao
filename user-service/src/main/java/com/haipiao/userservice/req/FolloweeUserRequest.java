@@ -1,5 +1,6 @@
 package com.haipiao.userservice.req;
 
+import com.google.gson.annotations.SerializedName;
 import com.haipiao.common.req.AbstractRequest;
 
 /**
@@ -7,8 +8,10 @@ import com.haipiao.common.req.AbstractRequest;
  */
 public class FolloweeUserRequest extends AbstractRequest {
 
+    @SerializedName("groupId")
     private int groupId;
 
+    @SerializedName("followeeId")
     private int followeeId;
 
     public FolloweeUserRequest() {

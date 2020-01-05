@@ -1,4 +1,4 @@
-package com.haipiao.userservice.handler.interfaces;
+package com.haipiao.userservice.handler.factory;
 
 import com.haipiao.persist.entity.ArticleCollectRelation;
 import com.haipiao.persist.entity.User;
@@ -36,7 +36,9 @@ public class ArticleRecommended implements Recommended{
         if (articles.size() == 0){
             return userRepository.getUserByFansCount();
         }
-        Iterable<User> users = userRepository.findAllById(articles.stream().map(ArticleCollectRelation::getCollectorId).collect(Collectors.toList()));
+        Iterable<User> users = userRepository.findAllById(articles.stream()
+                .map(ArticleCollectRelation::getCollectorId)
+                .collect(Collectors.toList()));
         return StreamSupport.stream(users.spliterator(), false).collect(Collectors.toList());
     }
 }

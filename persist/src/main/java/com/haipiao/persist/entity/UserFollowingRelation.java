@@ -14,7 +14,7 @@ public class UserFollowingRelation extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "user_id")
     private int userId;
@@ -22,19 +22,23 @@ public class UserFollowingRelation extends BaseEntity{
     @Column(name = "following_user_id")
     private int followingUserId;
 
+    @Column(name = "group_id")
+    private int groupId;
+
     public UserFollowingRelation() {
     }
 
-    public UserFollowingRelation(int userId, int followingUserId) {
+    public UserFollowingRelation(int userId, int followingUserId, int groupId) {
         this.userId = userId;
         this.followingUserId = followingUserId;
+        this.groupId = groupId;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -54,6 +58,14 @@ public class UserFollowingRelation extends BaseEntity{
         this.followingUserId = followingUserId;
     }
 
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,12 +73,13 @@ public class UserFollowingRelation extends BaseEntity{
         UserFollowingRelation that = (UserFollowingRelation) o;
         return getId() == that.getId() &&
                 getUserId() == that.getUserId() &&
-                getFollowingUserId() == that.getFollowingUserId();
+                getFollowingUserId() == that.getFollowingUserId() &&
+                getGroupId() == that.getGroupId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUserId(), getFollowingUserId());
+        return Objects.hash(getId(), getUserId(), getFollowingUserId(), getGroupId());
     }
 
     @Override
@@ -75,6 +88,7 @@ public class UserFollowingRelation extends BaseEntity{
                 "id=" + id +
                 ", userId=" + userId +
                 ", followingUserId=" + followingUserId +
+                ", groupId=" + groupId +
                 '}';
     }
 }
