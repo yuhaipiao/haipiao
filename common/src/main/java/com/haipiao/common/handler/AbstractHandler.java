@@ -26,8 +26,6 @@ public abstract class AbstractHandler<ReqT extends AbstractRequest, RespT extend
 
     protected abstract RespT execute(ReqT request) throws AppException;
 
-    protected abstract String actionKpi() throws AppException;
-
     @Override
     public ResponseEntity<RespT> handle(ReqT request) {
         return handle(null, request, false);
