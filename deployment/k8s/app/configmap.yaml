@@ -25,4 +25,6 @@ data:
     # 海漂的unicode
     sms.signature=\u6d77\u6f02
     sms.template=SMS_179225837
+    # log4j2 properties
+    logging.config=src/main/resources/log4j2.xml
   postgres: haipiaodev
