@@ -8,8 +8,8 @@ steps:
     args: ['clone', '--depth=1', 'https://github.com/HaiPiaoAPP/haipiao.git']
     id: git-clone
     waitFor: ['-']
-  - name: 'gcr.io/cloud-builders/gradle'
-    args: ['assemble']
+  - name: 'gradle:jdk11'
+    args: ['gradle', 'assemble']
     id: gradle
     waitFor: ['git-clone']
 
